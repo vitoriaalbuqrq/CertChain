@@ -12,6 +12,7 @@ export default {
         'dark-background': '#11151A',
         'secondary-bg': '#202831',
         'light-gray': '#ADB0B2',
+        'medium-gray': '#424950'
       }
     },
   },
