@@ -1,20 +1,16 @@
-# Use a imagem base do Node.js
 FROM node:alpine
 
-# Defina o diretório de trabalho
 WORKDIR /app
 
-# Copie os arquivos package.json e package-lock.json
-COPY CertChain/frontend/package*.json ./
+COPY frontend/package*.json ./frontend/
 
-# Instale as dependências
+WORKDIR /app/frontend
 RUN npm install
 
-# Copie o restante do código da aplicação
-COPY CertChain/frontend .
+WORKDIR /app
 
-# Exponha a porta que o Vite usa (geralmente 5173)
+COPY . .
+
 EXPOSE 5173
 
-# Comando para iniciar o servidor de desenvolvimento
-CMD ["npm", "run", "dev", "--", "--host"]
+CMD ["npm", "run", "dev", "--prefix", "frontend", "--", "--host"]
