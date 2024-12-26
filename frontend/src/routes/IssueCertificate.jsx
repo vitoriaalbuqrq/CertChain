@@ -7,7 +7,7 @@ import { ErrorMessage } from "../components/forms/ErrorMessage";
 import Field from "../components/forms/Field";
 import { useState } from "react";
 import FileInput from "../components/forms/FileInput";
-import {uploadToPinata} from "../services/pinataService";
+import { uploadToPinata } from "../services/pinataService";
 
 const issueCertificateFormSchema = z.object({
   recipientName: z.string().nonempty("O nome do destinatário é obrigatório."),
@@ -18,7 +18,7 @@ const issueCertificateFormSchema = z.object({
 });
 
 const IssueCertificate = () => {
-  const [image, setImage] = useState("");
+  const [file, setFile] = useState("");
   // eslint-disable-next-line no-unused-vars
   const [message, setMessage] = useState("");
   const today = new Date().toISOString().split("T")[0];
@@ -33,16 +33,21 @@ const IssueCertificate = () => {
   const handleFormSubmit = async (data) => {
     console.log(data); //TODO: Apenas para teste. Deve ser removido
 
-    //TODO: Verificar se o usuario carregou algum certificado
-    //Caso contrario, sera gerado um pdf com os dados do form e enviado para o IPFS
     try {
-      const fileUrl = image ? await uploadToPinata(image) : null; // Verifica se há arquivo antes do upload
-      if (fileUrl) {
-        console.log("File URL:", fileUrl);
-        setMessage("Upload bem-sucedido!");
-      } else {
-        console.log("Nenhum arquivo enviado.");
+      let fileUrl = null;
+      //Se o usuario enviou um pdf, faz o upload para o IPFS
+      if (file) {
+        fileUrl = await uploadToPinata(file);
+        console.log("Arquivo carregado no IPFS:", fileUrl);
       }
+
+      // Gerar o hash único com ou sem o arquivo PDF
+      //TODO: Implementar a generateCertificateHash
+      //const certificateHash = generateCertificateHash(data, fileUrl);
+      //console.log("Hash do certificado:", certificateHash);
+
+      setMessage("Certificado gerado com sucesso!");
+
     } catch (error) {
       console.error(error);
       setMessage(`Erro ao enviar o arquivo: ${error.message}`);
@@ -50,8 +55,8 @@ const IssueCertificate = () => {
   };
 
   function onFileChange(file) {
-    setImage(file || null);
-  } 
+    setFile(file || null);
+  }
 
   return (
     <main className="bg-dark-background h-full text-sm p-6 flex flex-col justify-start items-center md:pt-10 lg:text-base lg: pb-20">
@@ -103,7 +108,7 @@ const IssueCertificate = () => {
             </Field>
 
             <Field>
-              <FileInput onChange={onFileChange} label="Carregar modelo de certificado (opcional)"/>
+              <FileInput onChange={onFileChange} label="Carregar modelo de certificado (opcional)" />
             </Field>
 
             <button
