@@ -13,10 +13,26 @@ contract Certification {
     mapping(string => Certificate) private certificates;
     mapping(address => bool) private authorizedOrganizations;
 
+    address private owner;
+
     event CertificateGenerated(string certificate_id);
+
+    modifier onlyOwner() {
+        require(msg.sender == owner, "Caller is not the owner");
+        _;
+    }
 
     modifier onlyOrganization() {
         require(authorizedOrganizations[msg.sender], "Caller is not an authorized organization");
+        _;
+    }
+
+    constructor() {
+        owner = msg.sender;
+    }
+
+    function authorizeOrganization(address _organization) public onlyOwner {
+        authorizedOrganizations[_organization] = true;
     }
 
     function addCertificate(
