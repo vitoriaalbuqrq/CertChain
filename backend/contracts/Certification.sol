@@ -11,11 +11,13 @@ contract Certification {
     }
 
     mapping(string => Certificate) private certificates;
-    mapping(address => bool) private authorizedOrganizations;
+    mapping(address => string) private authorizedOrganizations;
 
     address private owner;
 
     event CertificateGenerated(string certificate_id);
+    event OrganizationAuthorized(address organization, string org_name);
+    event OrganizationUnauthorized(address organization);
 
     modifier onlyOwner() {
         require(msg.sender == owner, "Caller is not the owner");
@@ -23,7 +25,7 @@ contract Certification {
     }
 
     modifier onlyOrganization() {
-        require(authorizedOrganizations[msg.sender], "Caller is not an authorized organization");
+        require(bytes(authorizedOrganizations[msg.sender]).length != 0, "Caller is not an authorized organization");
         _;
     }
 
@@ -31,8 +33,14 @@ contract Certification {
         owner = msg.sender;
     }
 
-    function authorizeOrganization(address _organization) public onlyOwner {
-        authorizedOrganizations[_organization] = true;
+    function authorizeOrganization(address _organization, string memory _org_name) public onlyOwner {
+        authorizedOrganizations[_organization] = _org_name;
+        emit OrganizationAuthorized(_organization, _org_name);
+    }
+
+    function unauthorizeOrganization(address _organization) public onlyOwner {
+        delete authorizedOrganizations[_organization];
+        emit OrganizationUnauthorized(_organization);
     }
 
     function addCertificate(
@@ -46,6 +54,10 @@ contract Certification {
         require(
             bytes(certificates[_certificate_id].ipfs_hash).length == 0,
             "Certificate with this ID already exists"
+        );
+        require(
+            keccak256(bytes(authorizedOrganizations[msg.sender])) == keccak256(bytes(_org_name)),
+            "Organization name does not match the authorized address"
         );
         certificates[_certificate_id] = Certificate({
             candidate_name: _candidate_name,

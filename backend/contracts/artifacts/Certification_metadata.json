@@ -1,0 +1,204 @@
+{
+	"compiler": {
+		"version": "0.8.28+commit.7893614a"
+	},
+	"language": "Solidity",
+	"output": {
+		"abi": [
+			{
+				"inputs": [],
+				"stateMutability": "nonpayable",
+				"type": "constructor"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": false,
+						"internalType": "string",
+						"name": "certificate_id",
+						"type": "string"
+					}
+				],
+				"name": "CertificateGenerated",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": false,
+						"internalType": "address",
+						"name": "organization",
+						"type": "address"
+					},
+					{
+						"indexed": false,
+						"internalType": "string",
+						"name": "org_name",
+						"type": "string"
+					}
+				],
+				"name": "OrganizationAuthorized",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": false,
+						"internalType": "address",
+						"name": "organization",
+						"type": "address"
+					}
+				],
+				"name": "OrganizationUnauthorized",
+				"type": "event"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "string",
+						"name": "_certificate_id",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "_candidate_name",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "_certification_name",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "_org_name",
+						"type": "string"
+					},
+					{
+						"internalType": "uint256",
+						"name": "_emission_date",
+						"type": "uint256"
+					},
+					{
+						"internalType": "string",
+						"name": "_ipfs_hash",
+						"type": "string"
+					}
+				],
+				"name": "addCertificate",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "_organization",
+						"type": "address"
+					},
+					{
+						"internalType": "string",
+						"name": "_org_name",
+						"type": "string"
+					}
+				],
+				"name": "authorizeOrganization",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "string",
+						"name": "_certificate_id",
+						"type": "string"
+					}
+				],
+				"name": "getCertificate",
+				"outputs": [
+					{
+						"internalType": "string",
+						"name": "_candidate_name",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "_certification_name",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "_org_name",
+						"type": "string"
+					},
+					{
+						"internalType": "uint256",
+						"name": "_emission_date",
+						"type": "uint256"
+					},
+					{
+						"internalType": "string",
+						"name": "_ipfs_hash",
+						"type": "string"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "_organization",
+						"type": "address"
+					}
+				],
+				"name": "unauthorizeOrganization",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			}
+		],
+		"devdoc": {
+			"kind": "dev",
+			"methods": {},
+			"version": 1
+		},
+		"userdoc": {
+			"kind": "user",
+			"methods": {},
+			"version": 1
+		}
+	},
+	"settings": {
+		"compilationTarget": {
+			"backend/contracts/Certification.sol": "Certification"
+		},
+		"evmVersion": "cancun",
+		"libraries": {},
+		"metadata": {
+			"bytecodeHash": "ipfs"
+		},
+		"optimizer": {
+			"enabled": false,
+			"runs": 200
+		},
+		"remappings": []
+	},
+	"sources": {
+		"backend/contracts/Certification.sol": {
+			"keccak256": "0x5fea8dfba9e01cb3a82013f95159cf729c829b2355a9f162ec4375052c3d9c44",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://de8ddfb38100de06b6f7445c81379e8a2df9e831292153c08273686ef9c82de9",
+				"dweb:/ipfs/QmVJAU6CbymKiCsUTj7zEFYuDGv7DkAwG4eVJ6LfQKJRdF"
+			]
+		}
+	},
+	"version": 1
+}
