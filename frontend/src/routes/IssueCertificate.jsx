@@ -5,6 +5,9 @@ import Container from "../components/forms/Container";
 import Input from "../components/forms/Input";
 import { ErrorMessage } from "../components/forms/ErrorMessage";
 import Field from "../components/forms/Field";
+import { useState } from "react";
+import FileInput from "../components/forms/FileInput";
+import {uploadToPinata} from "../services/pinataService";
 
 const issueCertificateFormSchema = z.object({
   recipientName: z.string().nonempty("O nome do destinatário é obrigatório."),
@@ -15,13 +18,40 @@ const issueCertificateFormSchema = z.object({
 });
 
 const IssueCertificate = () => {
+  const [image, setImage] = useState("");
+  // eslint-disable-next-line no-unused-vars
+  const [message, setMessage] = useState("");
+  const today = new Date().toISOString().split("T")[0];
+
   const methods = useForm({
     resolver: zodResolver(issueCertificateFormSchema),
+    defaultValues: {
+      issueDate: today,
+    },
   });
 
-  const handleFormSubmit = (data) => {
-    console.log(data);
+  const handleFormSubmit = async (data) => {
+    console.log(data); //TODO: Apenas para teste. Deve ser removido
+
+    //TODO: Verificar se o usuario carregou algum certificado
+    //Caso contrario, sera gerado um pdf com os dados do form e enviado para o IPFS
+    try {
+      const fileUrl = image ? await uploadToPinata(image) : null; // Verifica se há arquivo antes do upload
+      if (fileUrl) {
+        console.log("File URL:", fileUrl);
+        setMessage("Upload bem-sucedido!");
+      } else {
+        console.log("Nenhum arquivo enviado.");
+      }
+    } catch (error) {
+      console.error(error);
+      setMessage(`Erro ao enviar o arquivo: ${error.message}`);
+    }
   };
+
+  function onFileChange(file) {
+    setImage(file || null);
+  } 
 
   return (
     <main className="bg-dark-background h-full text-sm p-6 flex flex-col justify-start items-center md:pt-10 lg:text-base lg: pb-20">
@@ -68,23 +98,16 @@ const IssueCertificate = () => {
                 label="Data de emissão"
                 name="issueDate"
                 type="date"
-                placeholder="Selecione a data de emissão"
               />
               <ErrorMessage name="issueDate" />
             </Field>
 
             <Field>
-              <Input
-                label="Carregar certificado (opcional)"
-                name="uploadCertificate"
-                type="file"
-                placeholder=""
-              />
-              <ErrorMessage name="uploadCertificate" />
+              <FileInput onChange={onFileChange} label="Carregar modelo de certificado (opcional)"/>
             </Field>
 
             <button
-              className="bg-primary rounded-full p-3 font-bold mt-4"
+              className="bg-primary rounded-full p-3 font-bold mt-4 text-white hover:opacity-90"
               type="submit"
             >
               Emitir Certificado
