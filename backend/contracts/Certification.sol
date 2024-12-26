@@ -10,7 +10,7 @@ contract Certification {
         string ipfs_hash;
     }
 
-    mapping(string => Certificate) private certificates;
+    mapping(string => Certificate) public certificates;
     mapping(address => string) private authorizedOrganizations;
 
     address private owner;
@@ -51,6 +51,12 @@ contract Certification {
         uint256 _emission_date,
         string memory _ipfs_hash
     ) public onlyOrganization {
+        require(bytes(_certificate_id).length > 0, "Certificate ID cannot be empty");
+        require(bytes(_candidate_name).length > 0, "Candidate name cannot be empty");
+        require(bytes(_certification_name).length > 0, "Certification name cannot be empty");
+        require(bytes(_org_name).length > 0, "Organization name cannot be empty");
+        require(_emission_date > 0, "Emission date must be valid");
+        require(bytes(_ipfs_hash).length > 0, "IPFS hash cannot be empty");
         require(
             bytes(certificates[_certificate_id].ipfs_hash).length == 0,
             "Certificate with this ID already exists"
@@ -90,5 +96,9 @@ contract Certification {
             cert.emission_date,
             cert.ipfs_hash
         );
+    }
+
+    function isVerified(string memory _certificate_id) public view returns (bool) {
+        return bytes(certificates[_certificate_id].ipfs_hash).length != 0;
     }
 }

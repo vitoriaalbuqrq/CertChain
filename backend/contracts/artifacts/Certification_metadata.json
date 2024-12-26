@@ -115,6 +115,45 @@
 				"inputs": [
 					{
 						"internalType": "string",
+						"name": "",
+						"type": "string"
+					}
+				],
+				"name": "certificates",
+				"outputs": [
+					{
+						"internalType": "string",
+						"name": "candidate_name",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "certification_name",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "org_name",
+						"type": "string"
+					},
+					{
+						"internalType": "uint256",
+						"name": "emission_date",
+						"type": "uint256"
+					},
+					{
+						"internalType": "string",
+						"name": "ipfs_hash",
+						"type": "string"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "string",
 						"name": "_certificate_id",
 						"type": "string"
 					}
@@ -145,6 +184,25 @@
 						"internalType": "string",
 						"name": "_ipfs_hash",
 						"type": "string"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "string",
+						"name": "_certificate_id",
+						"type": "string"
+					}
+				],
+				"name": "isVerified",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
 					}
 				],
 				"stateMutability": "view",
@@ -192,11 +250,11 @@
 	},
 	"sources": {
 		"backend/contracts/Certification.sol": {
-			"keccak256": "0x5fea8dfba9e01cb3a82013f95159cf729c829b2355a9f162ec4375052c3d9c44",
+			"keccak256": "0xd8d4f8f94631ab1eeb7b630e9dc4ec2a7c3b6d13ac6d165ab08287634329ac0c",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://de8ddfb38100de06b6f7445c81379e8a2df9e831292153c08273686ef9c82de9",
-				"dweb:/ipfs/QmVJAU6CbymKiCsUTj7zEFYuDGv7DkAwG4eVJ6LfQKJRdF"
+				"bzz-raw://36feb704786e9162d11222a5ab440942855ad5950b81325ea7850dff26e40fab",
+				"dweb:/ipfs/QmYVN3tJLHvNU2ytRbVSgvb7BT26mhF6acDsKsvyMMWnLG"
 			]
 		}
 	},
