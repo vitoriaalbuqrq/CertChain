@@ -8,6 +8,7 @@ import Field from "../components/forms/Field";
 import { useState } from "react";
 import FileInput from "../components/forms/FileInput";
 import { uploadToPinata } from "../services/pinataService";
+import Modal from "../components/ui/Modal";
 
 const issueCertificateFormSchema = z.object({
   recipientName: z.string().nonempty("O nome do destinatário é obrigatório."),
@@ -20,8 +21,9 @@ const issueCertificateFormSchema = z.object({
 const IssueCertificate = () => {
   const [file, setFile] = useState("");
   // eslint-disable-next-line no-unused-vars
-  const [message, setMessage] = useState("");
+  const [message, setMessage] = useState(""); //TODO: Verificar como sera mostrado as mensagens
   const today = new Date().toISOString().split("T")[0];
+  const [openModal, setOpenModal] = useState(false);
 
   const methods = useForm({
     resolver: zodResolver(issueCertificateFormSchema),
@@ -47,6 +49,7 @@ const IssueCertificate = () => {
       //console.log("Hash do certificado:", certificateHash);
 
       setMessage("Certificado gerado com sucesso!");
+      setOpenModal(true)
 
     } catch (error) {
       console.error(error);
@@ -119,6 +122,17 @@ const IssueCertificate = () => {
             </button>
           </form>
         </FormProvider>
+        <Modal
+          open={openModal}
+          onClose={() => setOpenModal(false)}
+          title="Certificado emitido com sucesso!">
+          <p className="mb-2">Hash para verificação:</p>
+          <div className="flex justify-between p-1 border border-solid border-light-gray rounded-md">
+            {/* TODO: Adicionar hash gerado no input */}
+            <input type="text" readOnly value="" className="w-full bg-transparent outline-none border-none text-light-gray px-2" />
+            <button className="bg-gray-500 text-white py-2 px-3 rounded-md hover:opacity-80">Copiar</button>
+          </div>
+        </Modal>
       </Container>
     </main>
   );
