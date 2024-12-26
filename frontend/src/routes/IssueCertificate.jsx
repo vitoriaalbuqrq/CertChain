@@ -9,6 +9,7 @@ import { useState } from "react";
 import FileInput from "../components/forms/FileInput";
 import { uploadToPinata } from "../services/pinataService";
 import Modal from "../components/ui/Modal";
+import CopyText from "../components/ui/CopyText";
 
 const issueCertificateFormSchema = z.object({
   recipientName: z.string().nonempty("O nome do destinatário é obrigatório."),
@@ -128,9 +129,7 @@ const IssueCertificate = () => {
           title="Certificado emitido com sucesso!">
           <p className="mb-2">Hash para verificação:</p>
           <div className="flex justify-between p-1 border border-solid border-light-gray rounded-md">
-            {/* TODO: Adicionar hash gerado no input */}
-            <input type="text" readOnly value="" className="w-full bg-transparent outline-none border-none text-light-gray px-2" />
-            <button className="bg-gray-500 text-white py-2 px-3 rounded-md hover:opacity-80">Copiar</button>
+            <CopyText/>
           </div>
         </Modal>
       </Container>
