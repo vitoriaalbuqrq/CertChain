@@ -24,13 +24,13 @@ contract Certification {
     constructor() {
         owner = msg.sender;
     }
- 
+
     function addOrganization(address _organization) public {
         require(msg.sender == owner, "Only the owner can add organizations");
         organizations[_organization] = true;
     }
- 
-    function removeOrganization(address _organization) public {
+
+     function removeOrganization(address _organization) public {
         require(msg.sender == owner, "Only the owner can remove organizations");
         organizations[_organization] = false;
     }
