@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.13;
+pragma solidity ^0.8.28;
 
 contract Certification {
     address public owner;
@@ -21,17 +21,21 @@ contract Certification {
         require(organizations[msg.sender] == true, "Only authorized organizations can generate certificates");
         _;
     }
+
     constructor() {
         owner = msg.sender;
     }
+
     function addOrganization(address _organization) public {
         require(msg.sender == owner, "Only the owner can add organizations");
         organizations[_organization] = true;
     }
+
     function removeOrganization(address _organization) public {
         require(msg.sender == owner, "Only the owner can remove organizations");
         organizations[_organization] = false;
     }
+
     function generateCertificate(
         string memory _certificate_id,
         string memory _candidate_name,
@@ -46,11 +50,11 @@ contract Certification {
         require(bytes(_org_name).length > 0, "Organization name cannot be empty");
         require(_emission_date > 0, "Emission date must be valid");
         require(bytes(_ipfs_hash).length > 0, "IPFS hash cannot be empty");
-
         require(
             bytes(certificates[_certificate_id].ipfs_hash).length == 0,
             "Certificate with this ID already exists"
         );
+
         Certificate memory cert = Certificate({
             candidate_name: _candidate_name,
             certification_name: _certification_name,
@@ -62,6 +66,7 @@ contract Certification {
 
         emit certificateGenerated(_certificate_id);
     }
+
     function getCertificate(
         string memory _certificate_id
     ) public view returns (
@@ -83,6 +88,7 @@ contract Certification {
             cert.ipfs_hash
         );
     }
+
     function isVerified(string memory _certificate_id) public view returns (bool) {
         return bytes(certificates[_certificate_id].ipfs_hash).length != 0;
     }

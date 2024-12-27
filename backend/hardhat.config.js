@@ -1,6 +1,14 @@
+//import { HardhatUserConfig } from "hardhat/config";
 require("@nomicfoundation/hardhat-toolbox");
 
-/** @type import('hardhat/config').HardhatUserConfig */
+const dotenv = require('dotenv');
+dotenv.config();
+
 module.exports = {
   solidity: "0.8.28",
+  networks: {
+    hardhat:{
+      chainId: 31337
+    }
+  }
 };
