@@ -10,6 +10,8 @@ import FileInput from "../components/forms/FileInput";
 import { uploadToPinata } from "../services/pinataService";
 import Modal from "../components/ui/Modal";
 import CopyText from "../components/ui/CopyText";
+import CryptoJS from "crypto-js";
+import { generateCertificate } from "../utils/generateCertificate";
 
 const issueCertificateFormSchema = z.object({
   recipientName: z.string().nonempty("O nome do destinatário é obrigatório."),
@@ -42,12 +44,16 @@ const IssueCertificate = () => {
       if (file) {
         fileUrl = await uploadToPinata(file);
         console.log("Arquivo carregado no IPFS:", fileUrl);
+      } else{
+        const generatedPDF = generateCertificate(data);
+        const pdfFile = new File([generatedPDF], "certificado.pdf", { type: "application/pdf" });
+  
+        fileUrl = await uploadToPinata(pdfFile);
+        console.log("Certificado gerado e carregado no IPFS:", fileUrl);
       }
 
-      // Gerar o hash único com ou sem o arquivo PDF
-      //TODO: Implementar a generateCertificateHash
-      //const certificateHash = generateCertificateHash(data, fileUrl);
-      //console.log("Hash do certificado:", certificateHash);
+      const certificateHash = generateCertificateHash(data, fileUrl);
+      console.log("Hash do certificado:", certificateHash);
 
       setMessage("Certificado gerado com sucesso!");
       setOpenModal(true)
@@ -61,6 +67,18 @@ const IssueCertificate = () => {
   function onFileChange(file) {
     setFile(file || null);
   }
+
+  const generateCertificateHash = (data, fileUrl = "") => {
+    const certificateData = `
+      RecipientName: ${data.recipientName}
+      CertificateTitle: ${data.certificateTitle}
+      IssuerName: ${data.issuerName}
+      IssueDate: ${data.issueDate}
+      FileURL: ${fileUrl}
+    `; 
+    const hash = CryptoJS.SHA256(certificateData).toString(CryptoJS.enc.Hex);
+    return hash;
+  };
 
   return (
     <main className="bg-dark-background h-full text-sm p-6 flex flex-col justify-start items-center md:pt-10 lg:text-base lg: pb-20">
