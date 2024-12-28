@@ -50,7 +50,6 @@ const IssueCertificate = () => {
   
         fileUrl = await uploadToPinata(pdfFile);
         console.log("Certificado gerado e carregado no IPFS:", fileUrl);
-
       }
 
       const certificateHash = generateCertificateHash(data, fileUrl);
