@@ -12,6 +12,7 @@ import Modal from "../components/ui/Modal";
 import CopyText from "../components/ui/CopyText";
 import CryptoJS from "crypto-js";
 import { generateCertificate } from "../utils/generateCertificate";
+import LoadingSpinner from "../components/ui/LoadingSpinner";
 
 const issueCertificateFormSchema = z.object({
   recipientName: z.string().nonempty("O nome do destinatário é obrigatório."),
@@ -23,10 +24,11 @@ const issueCertificateFormSchema = z.object({
 
 const IssueCertificate = () => {
   const [file, setFile] = useState("");
-  // eslint-disable-next-line no-unused-vars
-  const [message, setMessage] = useState(""); //TODO: Verificar como sera mostrado as mensagens
+  //const [message, setMessage] = useState(""); //TODO: Verificar como sera mostrado as mensagens
   const today = new Date().toISOString().split("T")[0];
   const [openModal, setOpenModal] = useState(false);
+  const [certificateHash, setCertificateHash] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const methods = useForm({
     resolver: zodResolver(issueCertificateFormSchema),
@@ -37,7 +39,7 @@ const IssueCertificate = () => {
 
   const handleFormSubmit = async (data) => {
     console.log(data); //TODO: Apenas para teste. Deve ser removido
-
+    setIsLoading(true);
     try {
       let fileUrl = null;
       //Se o usuario enviou um pdf, faz o upload para o IPFS
@@ -51,16 +53,15 @@ const IssueCertificate = () => {
         fileUrl = await uploadToPinata(pdfFile);
         console.log("Certificado gerado e carregado no IPFS:", fileUrl);
       }
+      setIsLoading(false);
+      const hash = generateCertificateHash(data, fileUrl);
+      setCertificateHash(hash);
+      console.log("Hash do certificado:", hash);
 
-      const certificateHash = generateCertificateHash(data, fileUrl);
-      console.log("Hash do certificado:", certificateHash);
-
-      setMessage("Certificado gerado com sucesso!");
       setOpenModal(true)
 
     } catch (error) {
       console.error(error);
-      setMessage(`Erro ao enviar o arquivo: ${error.message}`);
     }
   };
 
@@ -139,6 +140,10 @@ const IssueCertificate = () => {
             >
               Emitir Certificado
             </button>
+
+            {isLoading && (
+              <LoadingSpinner/>
+            )}
           </form>
         </FormProvider>
         <Modal
@@ -147,7 +152,7 @@ const IssueCertificate = () => {
           title="Certificado emitido com sucesso!">
           <p className="mb-2">Hash para verificação:</p>
           <div className="flex justify-between p-1 border border-solid border-light-gray rounded-md">
-            <CopyText/>
+            <CopyText info={certificateHash}/>
           </div>
         </Modal>
       </Container>

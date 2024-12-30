@@ -16,6 +16,7 @@
     "hardhat": "^2.22.17"
   },
   "dependencies": {
+    "backend": "file:",
     "dotenv": "^16.4.7"
   }
 }
