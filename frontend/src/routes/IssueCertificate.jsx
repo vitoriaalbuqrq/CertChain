@@ -84,7 +84,7 @@ const IssueCertificate = () => {
   };
 
   return (
-    <main className="bg-dark-background h-full text-sm p-6 flex flex-col justify-start items-center md:pt-10 lg:text-base lg:pb-20">
+    <main className="bg-dark-background min-h-screen text-sm p-6 flex flex-col justify-start items-center md:pt-10 lg:text-base lg:pb-20">
       <FormHeader title="Emissão de Certificado" info="Preencha os dados abaixo para emitir um certificado. Após a emissão, o certificado estará pronto para ser consultado."/>
       <Container>
         <FormProvider {...methods}>

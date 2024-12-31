@@ -45,7 +45,7 @@ const ValidateCertificate = () => {
   }
 
   return (
-    <main className="bg-dark-background h-screen text-sm px-6 flex flex-col justify-start items-center md:pt-10 lg:text-base lg: pb-20">
+    <main className="bg-dark-background min-h-screen text-sm p-6 flex flex-col justify-start items-center md:pt-10 lg:text-base lg:pb-20">
       <FormHeader title="Verificação de certificado" info="Confirme a autenticidade de um certificado fornecendo o ID único correspondente ou enviando o arquivo PDF do certificado para verificação." />
       <Container>
         <FormProvider {...methods}>
@@ -80,6 +80,7 @@ const ValidateCertificate = () => {
             )}
           </form>
         </FormProvider>
+        {/* TODO: Melhorar */}
         <Modal
           open={openModal}
           onClose={() => setOpenModal(false)}

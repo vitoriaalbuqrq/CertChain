@@ -14,8 +14,8 @@ const Navbar = () => {
       <ul className="gap-10 list-none hidden md:flex">
         <li><Link to="/validate" className="hover:opacity-90 hover:text-primary transition">Validar</Link></li>
         <li><Link to="/issue" className="hover:opacity-90 hover:text-primary transition">Emitir</Link></li>
-        <li><Link to="" className="text-primary font-semibold hover:opacity-80 transition">Login</Link></li>
-        <li><Link to="" className="bg-primary font-semibold text-dark-background px-3 py-2 rounded-full hover:opacity-90 transition">Registrar Instituição</Link></li>
+        {/* TODO: Modificar para exibir opção apenas para owner */}
+        <li><Link to="/registerInstitution" className="bg-primary font-semibold text-dark-background px-3 py-2 rounded-full hover:opacity-90 transition">Registrar Instituição</Link></li>
       </ul>
       <div onClick={handleNav} className='block md:hidden'>
           {nav ? <AiOutlineClose size={20}/> : <AiOutlineMenu size={20} />}
@@ -25,8 +25,7 @@ const Navbar = () => {
         <ul className="p-4 flex flex-col gap-6 list-none">
           <li><Link to="/validate" className="hover:opacity-90 hover:text-primary transition">Validar</Link></li>
           <li><Link to="/issue" className="hover:opacity-90 hover:text-primary transition">Emitir</Link></li>
-          <li><Link to="" className="text-primary font-semibold hover:opacity-80 transition">Login</Link></li>
-          <li><Link to="" className="bg-primary font-semibold text-dark-background px-3 py-2 rounded-full hover:opacity-90 transition flex flex-nowrap text-center">Registrar Instituição</Link></li>
+          <li><Link to="/registerInstitution" className="bg-primary font-semibold text-dark-background px-3 py-2 rounded-full hover:opacity-90 transition flex flex-nowrap text-center">Registrar Instituição</Link></li>
         </ul>
       </div>
 

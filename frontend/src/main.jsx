@@ -10,6 +10,7 @@ import Home from './routes/Home';
 import ValidateCertificate from './routes/ValidateCertificate';
 import IssueCertificate from './routes/IssueCertificate';
 import Roles from './routes/Roles';
+import RegisterInstitution from './routes/RegisterInstitution';
 
 const router = createBrowserRouter([
   {
@@ -31,6 +32,10 @@ const router = createBrowserRouter([
       {
         path: "/issue",
         element: <IssueCertificate />,
+      },
+      {
+        path: "/registerInstitution",
+        element: <RegisterInstitution />,
       },
     ]
   }
