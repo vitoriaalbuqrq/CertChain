@@ -46,7 +46,7 @@ const Input = ({ dropzone, label }) => {
             <p className="font-bold text-sm text-primary">Solte para adicionar</p>
           ) : (
             <>
-              <p className="mb-2 text-sm text-gray-400">
+              <p className="mb-2 text-sm text-gray-400 text-center">
                 <span className="font-bold">Clique para enviar</span> ou arraste até aqui
               </p>
               <p className="text-gray-400 text-sm">PDF</p>

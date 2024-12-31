@@ -12,6 +12,10 @@ import Modal from "../components/ui/Modal";
 import CopyText from "../components/ui/CopyText";
 import CryptoJS from "crypto-js";
 import { generateCertificate } from "../utils/generateCertificate";
+import LoadingSpinner from "../components/ui/LoadingSpinner";
+import FormHeader from "../components/forms/FormHeader";
+import Button from "../components/ui/Button";
+
 
 const issueCertificateFormSchema = z.object({
   recipientName: z.string().nonempty("O nome do destinatário é obrigatório."),
@@ -23,10 +27,10 @@ const issueCertificateFormSchema = z.object({
 
 const IssueCertificate = () => {
   const [file, setFile] = useState("");
-  // eslint-disable-next-line no-unused-vars
-  const [message, setMessage] = useState(""); //TODO: Verificar como sera mostrado as mensagens
   const today = new Date().toISOString().split("T")[0];
   const [openModal, setOpenModal] = useState(false);
+  const [certificateHash, setCertificateHash] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const methods = useForm({
     resolver: zodResolver(issueCertificateFormSchema),
@@ -37,7 +41,7 @@ const IssueCertificate = () => {
 
   const handleFormSubmit = async (data) => {
     console.log(data); //TODO: Apenas para teste. Deve ser removido
-
+    setIsLoading(true);
     try {
       let fileUrl = null;
       //Se o usuario enviou um pdf, faz o upload para o IPFS
@@ -51,16 +55,15 @@ const IssueCertificate = () => {
         fileUrl = await uploadToPinata(pdfFile);
         console.log("Certificado gerado e carregado no IPFS:", fileUrl);
       }
+      setIsLoading(false);
+      const hash = generateCertificateHash(data, fileUrl);
+      setCertificateHash(hash);
+      console.log("Hash do certificado:", hash);
 
-      const certificateHash = generateCertificateHash(data, fileUrl);
-      console.log("Hash do certificado:", certificateHash);
-
-      setMessage("Certificado gerado com sucesso!");
       setOpenModal(true)
 
     } catch (error) {
       console.error(error);
-      setMessage(`Erro ao enviar o arquivo: ${error.message}`);
     }
   };
 
@@ -81,9 +84,8 @@ const IssueCertificate = () => {
   };
 
   return (
-    <main className="bg-dark-background h-full text-sm p-6 flex flex-col justify-start items-center md:pt-10 lg:text-base lg: pb-20">
-      <h1 className="text-2xl font-bold text-white">Emissão de Certificado</h1>
-      <p className="text-secondary-text w-full md:w-2/3 lg:w-1/3 text-center mt-3 mb-10">Preencha os dados abaixo para emitir um certificado. Após a emissão, o certificado estará pronto para ser consultado.</p>
+    <main className="bg-dark-background h-full text-sm p-6 flex flex-col justify-start items-center md:pt-10 lg:text-base lg:pb-20">
+      <FormHeader title="Emissão de Certificado" info="Preencha os dados abaixo para emitir um certificado. Após a emissão, o certificado estará pronto para ser consultado."/>
       <Container>
         <FormProvider {...methods}>
           <form
@@ -130,15 +132,14 @@ const IssueCertificate = () => {
             </Field>
 
             <Field>
-              <FileInput onChange={onFileChange} label="Carregar modelo de certificado (opcional)" />
+              <FileInput onChange={onFileChange} label="Carregar certificado (opcional)" />
             </Field>
 
-            <button
-              className="bg-primary rounded-full p-3 font-bold mt-4 text-white hover:opacity-90"
-              type="submit"
-            >
-              Emitir Certificado
-            </button>
+            <Button text="Emitir Certificado"/>
+
+            {isLoading && (
+              <LoadingSpinner/>
+            )}
           </form>
         </FormProvider>
         <Modal
@@ -147,7 +148,7 @@ const IssueCertificate = () => {
           title="Certificado emitido com sucesso!">
           <p className="mb-2">Hash para verificação:</p>
           <div className="flex justify-between p-1 border border-solid border-light-gray rounded-md">
-            <CopyText/>
+            <CopyText info={certificateHash}/>
           </div>
         </Modal>
       </Container>

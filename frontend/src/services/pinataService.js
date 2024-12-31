@@ -7,9 +7,6 @@ const GATEWAY = import.meta.env.VITE_PINATA_GATEWAY;
 
 
 export async function uploadToPinata(file) {
-  // if (!file) {
-  //   throw new Error("Nenhum arquivo fornecido para upload.");
-  // }
 
   const formData = new FormData();
   formData.append("file", file);

@@ -1,21 +1,24 @@
 import { useState } from "react"
 
-const CopyText = () => {
-  const [copyText, setCopyText] = useState('');
+const CopyText = ({ info }) => {
   const [isCopied, setIsCopied] = useState(false);
 
   const handleCopy = () => {
-    navigator.clipboard.writeText(copyText);
+    navigator.clipboard.writeText(info);
     setIsCopied(!isCopied);
-    console.log('clicou')
+    setTimeout(() => setIsCopied(false), 2000); 0
   }
 
   return (
-    <>
-      {/* TODO: Adicionar hash gerado no input */}
-      <input type="text" readOnly value={copyText} onChange={(e)=>setCopyText(e.target.value)} className="w-full bg-transparent outline-none border-none text-light-gray px-2" />
-      <button onClick={handleCopy} className={`text-white py-2 px-3 rounded-md hover:opacity-80 ${isCopied ? 'bg-gray-500' : 'bg-green-600'}`}>Copiar</button>
-    </>
+    <div className="flex justify-between w-full h-auto">
+      <textarea
+        readOnly
+        value={info}
+        className="w-full bg-transparent resize-none outline-none overflow-auto border-none text-light-gray px-2" />
+      <button
+        onClick={handleCopy}
+        className={`text-white py-2 px-3 rounded-md hover:opacity-80 ${isCopied ? 'bg-gray-500' : 'bg-green-600'}`}>{isCopied ? "Copiado" : "Copiar"}</button>
+    </div>
   )
 }
 
