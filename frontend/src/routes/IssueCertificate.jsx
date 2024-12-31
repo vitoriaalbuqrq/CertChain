@@ -13,6 +13,8 @@ import CopyText from "../components/ui/CopyText";
 import CryptoJS from "crypto-js";
 import { generateCertificate } from "../utils/generateCertificate";
 import LoadingSpinner from "../components/ui/LoadingSpinner";
+import FormHeader from "../components/forms/FormHeader";
+import Button from "../components/ui/Button";
 
 const issueCertificateFormSchema = z.object({
   recipientName: z.string().nonempty("O nome do destinatário é obrigatório."),
@@ -24,7 +26,6 @@ const issueCertificateFormSchema = z.object({
 
 const IssueCertificate = () => {
   const [file, setFile] = useState("");
-  //const [message, setMessage] = useState(""); //TODO: Verificar como sera mostrado as mensagens
   const today = new Date().toISOString().split("T")[0];
   const [openModal, setOpenModal] = useState(false);
   const [certificateHash, setCertificateHash] = useState("");
@@ -82,9 +83,8 @@ const IssueCertificate = () => {
   };
 
   return (
-    <main className="bg-dark-background h-full text-sm p-6 flex flex-col justify-start items-center md:pt-10 lg:text-base lg: pb-20">
-      <h1 className="text-2xl font-bold text-white">Emissão de Certificado</h1>
-      <p className="text-secondary-text w-full md:w-2/3 lg:w-1/3 text-center mt-3 mb-10">Preencha os dados abaixo para emitir um certificado. Após a emissão, o certificado estará pronto para ser consultado.</p>
+    <main className="bg-dark-background h-full text-sm p-6 flex flex-col justify-start items-center md:pt-10 lg:text-base lg:pb-20">
+      <FormHeader title="Emissão de Certificado" info="Preencha os dados abaixo para emitir um certificado. Após a emissão, o certificado estará pronto para ser consultado."/>
       <Container>
         <FormProvider {...methods}>
           <form
@@ -131,15 +131,10 @@ const IssueCertificate = () => {
             </Field>
 
             <Field>
-              <FileInput onChange={onFileChange} label="Carregar modelo de certificado (opcional)" />
+              <FileInput onChange={onFileChange} label="Carregar certificado (opcional)" />
             </Field>
 
-            <button
-              className="bg-primary rounded-full p-3 font-bold mt-4 text-white hover:opacity-90"
-              type="submit"
-            >
-              Emitir Certificado
-            </button>
+            <Button text="Emitir Certificado"/>
 
             {isLoading && (
               <LoadingSpinner/>
