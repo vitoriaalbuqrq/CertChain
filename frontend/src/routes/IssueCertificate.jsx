@@ -16,6 +16,7 @@ import LoadingSpinner from "../components/ui/LoadingSpinner";
 import FormHeader from "../components/forms/FormHeader";
 import Button from "../components/ui/Button";
 
+
 const issueCertificateFormSchema = z.object({
   recipientName: z.string().nonempty("O nome do destinatário é obrigatório."),
   certificateTitle: z.string().nonempty("O título do certificado é obrigatório."),

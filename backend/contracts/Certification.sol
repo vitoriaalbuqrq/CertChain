@@ -26,7 +26,9 @@ contract Certification {
         owner = msg.sender;
     }
 
+
     function addOrganization(address _organization) public {
+
         require(msg.sender == owner, "Only the owner can add organizations");
         organizations[_organization] = true;
     }
