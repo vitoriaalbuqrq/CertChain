@@ -7,6 +7,9 @@ import Input from "../components/forms/Input"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
 import Button from "../components/ui/Button"
+import { addOrganization } from "../contracts/contractIntegration";
+import { useState } from "react"
+import LoadingSpinner from "../components/ui/LoadingSpinner"
 
 const registerInstitutionSchema = z.object({
   institutionAddress: z
@@ -16,12 +19,22 @@ const registerInstitutionSchema = z.object({
 });
 
 const RegisterInstitution = () => {
+  const [isLoading, setIsLoading] = useState(false);
+  
   const methods = useForm({
     resolver: zodResolver(registerInstitutionSchema),
   });
 
   const handleFormSubmit = async (data) => {
-    console.log(data);
+    setIsLoading(true);
+    
+    try {
+      await addOrganization(data.institutionAddress);
+      console.log("Organização adicionada")
+      setIsLoading(false);
+    }catch (error) {
+      console.log("Erro ao autorizar a instituição.", error)
+    }
   }
 
   return (
@@ -43,6 +56,9 @@ const RegisterInstitution = () => {
               <ErrorMessage name="institutionAddress" />
             </Field>
             <Button text="Autorizar Instituição" />
+            {isLoading && (
+              <LoadingSpinner/>
+            )}
           </form>
         </FormProvider>
       </Container>

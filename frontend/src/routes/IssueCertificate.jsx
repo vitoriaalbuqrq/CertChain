@@ -15,6 +15,7 @@ import { generateCertificate } from "../utils/generateCertificate";
 import LoadingSpinner from "../components/ui/LoadingSpinner";
 import FormHeader from "../components/forms/FormHeader";
 import Button from "../components/ui/Button";
+import { issueCertificate } from "../contracts/contractIntegration";
 
 
 const issueCertificateFormSchema = z.object({
@@ -31,6 +32,7 @@ const IssueCertificate = () => {
   const [openModal, setOpenModal] = useState(false);
   const [certificateHash, setCertificateHash] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [message, setMessage] = useState("")
 
   const methods = useForm({
     resolver: zodResolver(issueCertificateFormSchema),
@@ -46,25 +48,33 @@ const IssueCertificate = () => {
       let fileUrl = null;
       //Se o usuario enviou um pdf, faz o upload para o IPFS
       if (file) {
+        //TODO: Precisa verificar se a organização é autorizada antes de fazer upload no pinata
         fileUrl = await uploadToPinata(file);
         console.log("Arquivo carregado no IPFS:", fileUrl);
-      } else{
-        const generatedPDF = generateCertificate(data);
-        const pdfFile = new File([generatedPDF], "certificado.pdf", { type: "application/pdf" });
-  
-        fileUrl = await uploadToPinata(pdfFile);
-        console.log("Certificado gerado e carregado no IPFS:", fileUrl);
       }
-      setIsLoading(false);
+        //TODO: Analisar se vamos gerar PDF e enviar para o IPFS
+        //const generatedPDF = generateCertificate(data);
+        //const pdfFile = new File([generatedPDF], "certificado.pdf", { type: "application/pdf" });
+
+        //fileUrl = await uploadToPinata(pdfFile);
+        //console.log("Certificado gerado e carregado no IPFS:", fileUrl);
+      
       const hash = generateCertificateHash(data, fileUrl);
+      
+      const certificateId = `${data.recipientName}`; //TODO: Temporario
+
+      await issueCertificate({ ...data, certificateId, hash })
+
       setCertificateHash(hash);
       console.log("Hash do certificado:", hash);
 
-      setOpenModal(true)
+      setOpenModal(true);
 
     } catch (error) {
       console.error(error);
+      setMessage(error.message)
     }
+    setIsLoading(false);
   };
 
   function onFileChange(file) {
@@ -78,14 +88,14 @@ const IssueCertificate = () => {
       IssuerName: ${data.issuerName}
       IssueDate: ${data.issueDate}
       FileURL: ${fileUrl}
-    `; 
+    `;
     const hash = CryptoJS.SHA256(certificateData).toString(CryptoJS.enc.Hex);
     return hash;
   };
 
   return (
     <main className="bg-dark-background min-h-screen text-sm p-6 flex flex-col justify-start items-center md:pt-10 lg:text-base lg:pb-20">
-      <FormHeader title="Emissão de Certificado" info="Preencha os dados abaixo para emitir um certificado. Após a emissão, o certificado estará pronto para ser consultado."/>
+      <FormHeader title="Emissão de Certificado" info="Preencha os dados abaixo para emitir um certificado. Após a emissão, o certificado estará pronto para ser consultado." />
       <Container>
         <FormProvider {...methods}>
           <form
@@ -135,10 +145,13 @@ const IssueCertificate = () => {
               <FileInput onChange={onFileChange} label="Carregar certificado (opcional)" />
             </Field>
 
-            <Button text="Emitir Certificado"/>
+            <Button text="Emitir Certificado" />
 
             {isLoading && (
-              <LoadingSpinner/>
+              <LoadingSpinner />
+            )}
+            {message && (
+              <p>{message}</p>
             )}
           </form>
         </FormProvider>
@@ -148,7 +161,7 @@ const IssueCertificate = () => {
           title="Certificado emitido com sucesso!">
           <p className="mb-2">Hash para verificação:</p>
           <div className="flex justify-between p-1 border border-solid border-light-gray rounded-md">
-            <CopyText info={certificateHash}/>
+            <CopyText info={certificateHash} />
           </div>
         </Modal>
       </Container>
