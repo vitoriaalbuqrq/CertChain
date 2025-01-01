@@ -22,7 +22,7 @@ async function main() {
     const isAuthorized = await certification.organizations(orgAddress);
     console.log("Organização está autorizada?", isAuthorized);
 
-    const certificateId = tx.to;
+    const certificateId = "123";
     const candidateName = "John Doe";
     const certificationName = "Blockchain Developer";
     const orgName = "MetaOrganization";

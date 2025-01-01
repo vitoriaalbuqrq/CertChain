@@ -1,1 +1,223 @@
-[ 	{ 		"inputs": [], 		"stateMutability": "nonpayable", 		"type": "constructor" 	}, 	{ 		"anonymous": false, 		"inputs": [ 			{ 				"indexed": false, 				"internalType": "string", 				"name": "certificate_id", 				"type": "string" 			} 		], 		"name": "certificateGenerated", 		"type": "event" 	}, 	{ 		"inputs": [ 			{ 				"internalType": "address", 				"name": "_organization", 				"type": "address" 			} 		], 		"name": "addOrganization", 		"outputs": [], 		"stateMutability": "nonpayable", 		"type": "function" 	}, 	{ 		"inputs": [ 			{ 				"internalType": "string", 				"name": "", 				"type": "string" 			} 		], 		"name": "certificates", 		"outputs": [ 			{ 				"internalType": "string", 				"name": "candidate_name", 				"type": "string" 			}, 			{ 				"internalType": "string", 				"name": "certification_name", 				"type": "string" 			}, 			{ 				"internalType": "string", 				"name": "org_name", 				"type": "string" 			}, 			{ 				"internalType": "uint256", 				"name": "emission_date", 				"type": "uint256" 			}, 			{ 				"internalType": "string", 				"name": "ipfs_hash", 				"type": "string" 			} 		], 		"stateMutability": "view", 		"type": "function" 	}, 	{ 		"inputs": [ 			{ 				"internalType": "string", 				"name": "_certificate_id", 				"type": "string" 			}, 			{ 				"internalType": "string", 				"name": "_candidate_name", 				"type": "string" 			}, 			{ 				"internalType": "string", 				"name": "_certification_name", 				"type": "string" 			}, 			{ 				"internalType": "string", 				"name": "_org_name", 				"type": "string" 			}, 			{ 				"internalType": "uint256", 				"name": "_emission_date", 				"type": "uint256" 			}, 			{ 				"internalType": "string", 				"name": "_ipfs_hash", 				"type": "string" 			} 		], 		"name": "generateCertificate", 		"outputs": [], 		"stateMutability": "nonpayable", 		"type": "function" 	}, 	{ 		"inputs": [ 			{ 				"internalType": "string", 				"name": "_certificate_id", 				"type": "string" 			} 		], 		"name": "getCertificate", 		"outputs": [ 			{ 				"internalType": "string", 				"name": "_candidate_name", 				"type": "string" 			}, 			{ 				"internalType": "string", 				"name": "_certification_name", 				"type": "string" 			}, 			{ 				"internalType": "string", 				"name": "_org_name", 				"type": "string" 			}, 			{ 				"internalType": "uint256", 				"name": "_emission_date", 				"type": "uint256" 			}, 			{ 				"internalType": "string", 				"name": "_ipfs_hash", 				"type": "string" 			} 		], 		"stateMutability": "view", 		"type": "function" 	}, 	{ 		"inputs": [ 			{ 				"internalType": "string", 				"name": "_certificate_id", 				"type": "string" 			} 		], 		"name": "isVerified", 		"outputs": [ 			{ 				"internalType": "bool", 				"name": "", 				"type": "bool" 			} 		], 		"stateMutability": "view", 		"type": "function" 	}, 	{ 		"inputs": [ 			{ 				"internalType": "address", 				"name": "", 				"type": "address" 			} 		], 		"name": "organizations", 		"outputs": [ 			{ 				"internalType": "bool", 				"name": "", 				"type": "bool" 			} 		], 		"stateMutability": "view", 		"type": "function" 	}, 	{ 		"inputs": [], 		"name": "owner", 		"outputs": [ 			{ 				"internalType": "address", 				"name": "", 				"type": "address" 			} 		], 		"stateMutability": "view", 		"type": "function" 	}, 	{ 		"inputs": [ 			{ 				"internalType": "address", 				"name": "_organization", 				"type": "address" 			} 		], 		"name": "removeOrganization", 		"outputs": [], 		"stateMutability": "nonpayable", 		"type": "function" 	} ]
+[
+    {
+      "inputs": [],
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "string",
+          "name": "certificate_id",
+          "type": "string"
+        }
+      ],
+      "name": "certificateGenerated",
+      "type": "event"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_organization",
+          "type": "address"
+        }
+      ],
+      "name": "addOrganization",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "",
+          "type": "string"
+        }
+      ],
+      "name": "certificates",
+      "outputs": [
+        {
+          "internalType": "string",
+          "name": "certificate_id",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "candidate_name",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "certification_name",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "org_name",
+          "type": "string"
+        },
+        {
+          "internalType": "uint256",
+          "name": "emission_date",
+          "type": "uint256"
+        },
+        {
+          "internalType": "string",
+          "name": "ipfs_hash",
+          "type": "string"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "_certificate_id",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "_candidate_name",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "_certification_name",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "_org_name",
+          "type": "string"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_emission_date",
+          "type": "uint256"
+        },
+        {
+          "internalType": "string",
+          "name": "_ipfs_hash",
+          "type": "string"
+        }
+      ],
+      "name": "generateCertificate",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "_certificate_id",
+          "type": "string"
+        }
+      ],
+      "name": "getCertificate",
+      "outputs": [
+        {
+          "internalType": "string",
+          "name": "certificate_id",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "_candidate_name",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "_certification_name",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "_org_name",
+          "type": "string"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_emission_date",
+          "type": "uint256"
+        },
+        {
+          "internalType": "string",
+          "name": "_ipfs_hash",
+          "type": "string"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "_certificate_id",
+          "type": "string"
+        }
+      ],
+      "name": "isVerified",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "name": "organizations",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "owner",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_organization",
+          "type": "address"
+        }
+      ],
+      "name": "removeOrganization",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+]

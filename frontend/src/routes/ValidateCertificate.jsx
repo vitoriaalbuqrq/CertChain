@@ -11,6 +11,8 @@ import { ErrorMessage } from "../components/forms/ErrorMessage";
 import Modal from "../components/ui/Modal";
 import LoadingSpinner from "../components/ui/LoadingSpinner";
 import Button from "../components/ui/Button";
+import { isCertificateValid } from "../contracts/contractIntegration";
+
 
 const validateCertificateSchema = z.object({
   certificateId: z.string().optional(),
@@ -25,6 +27,7 @@ const ValidateCertificate = () => {
   const [file, setFile] = useState("");
   const [openModal, setOpenModal] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [validationMessage, setValidationMessage] = useState(false);
 
   const methods = useForm({
     resolver: zodResolver(validateCertificateSchema),
@@ -36,9 +39,18 @@ const ValidateCertificate = () => {
     //TODO: Verificar se pdf esta no IPFS ou
     //TODO: Buscar por ID do certificado
     
+    try {
+      const isValid = await isCertificateValid(data.certificateId)
+      console.log(isValid)
+      isValid ? setValidationMessage(true) : setValidationMessage(false);
+    } catch (error) {
+      console.log(error)
+    }
+    console.log(validationMessage)
     setIsLoading(false);
     setOpenModal(true)
   }
+
 
   function onFileChange(file) {
     setFile(file || null);
@@ -84,7 +96,7 @@ const ValidateCertificate = () => {
         <Modal
           open={openModal}
           onClose={() => setOpenModal(false)}
-          title="Certificado Valido!">
+          title={validationMessage ? "Certificado válido!" : "Certificado inválido!"}>
           {/* Redireciona para o PDF do certificado */}
           <button>Ver PDF</button>
         </Modal>

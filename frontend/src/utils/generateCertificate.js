@@ -1,5 +1,6 @@
 import { jsPDF } from "jspdf";
 
+//TODO: Verificar certificateHash
 const addCertificateContent = (pdf, data) => {
 
     pdf.setFont("helvetica", "normal").setFontSize(12).setTextColor(100, 100, 100);

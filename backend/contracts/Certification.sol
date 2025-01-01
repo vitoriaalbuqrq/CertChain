@@ -6,6 +6,7 @@ contract Certification {
     mapping(address => bool) public organizations;
 
     struct Certificate {
+        string certificate_id;
         string candidate_name;
         string certification_name;
         string org_name;
@@ -59,6 +60,7 @@ contract Certification {
         );
 
         Certificate memory cert = Certificate({
+            certificate_id: _certificate_id,
             candidate_name: _candidate_name,
             certification_name: _certification_name,
             org_name: _org_name,
@@ -73,6 +75,7 @@ contract Certification {
     function getCertificate(
         string memory _certificate_id
     ) public view returns (
+        string memory certificate_id,
         string memory _candidate_name,
         string memory _certification_name,
         string memory _org_name,
@@ -84,6 +87,7 @@ contract Certification {
         require(bytes(certificates[_certificate_id].ipfs_hash).length != 0, "Certificate with this ID does not exist");
 
         return (
+            _certificate_id,
             cert.candidate_name,
             cert.certification_name,
             cert.org_name,

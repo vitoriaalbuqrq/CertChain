@@ -1,7 +1,7 @@
 import { ethers } from 'ethers';
 import ABI from './contractABI.json';
 
-const CONTRACT_ADDRESS = '0xB12f5328bdA49f4F4CBc9285050AdD04E9cb635d';
+const CONTRACT_ADDRESS = '0x59a17A7898a47DC83CB4E482EABf7659FBf7eaD7';
 
 //TODO: Remover logs
 async function getProvider() {
@@ -33,6 +33,25 @@ async function addOrganization(address) {
   }
 }
 
+async function isAuthorized() {
+  try {
+    const provider = await getProvider();
+    const signer = await provider.getSigner();
+    const orgAddress = await signer.getAddress();
+
+    const contract = new ethers.Contract(CONTRACT_ADDRESS, ABI, signer);
+
+    console.log("endereço da organização", orgAddress);
+
+    const isAuthorized = await contract.organizations(orgAddress);
+    return isAuthorized;
+
+  }catch (err){
+    console.error('Erro ao verificar organização', err);
+    return false;
+  }
+}
+
 async function issueCertificate(certificateData){
   try {
     const contract = await getContractSigner();
@@ -56,4 +75,18 @@ async function issueCertificate(certificateData){
   }
 }
 
-export { addOrganization, issueCertificate };
+
+async function isCertificateValid(certificateId){
+  try {
+    const provider = await getProvider();
+    const contract = new ethers.Contract(CONTRACT_ADDRESS, ABI, provider);
+    const isValid = await contract.isVerified(certificateId);
+    console.log('isValid:', isValid);
+    return isValid;
+  } catch (err) {
+    console.error(`Erro ao verificar o certificado ${certificateId}:`, err);
+    return false;
+  }
+}
+
+export { addOrganization, issueCertificate, isCertificateValid, isAuthorized };

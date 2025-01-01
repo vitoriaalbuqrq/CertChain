@@ -15,7 +15,7 @@ import { generateCertificate } from "../utils/generateCertificate";
 import LoadingSpinner from "../components/ui/LoadingSpinner";
 import FormHeader from "../components/forms/FormHeader";
 import Button from "../components/ui/Button";
-import { issueCertificate } from "../contracts/contractIntegration";
+import { issueCertificate, isAuthorized } from "../contracts/contractIntegration";
 
 
 const issueCertificateFormSchema = z.object({
@@ -45,23 +45,28 @@ const IssueCertificate = () => {
     console.log(data); //TODO: Apenas para teste. Deve ser removido
     setIsLoading(true);
     try {
-      let fileUrl = null;
-      //Se o usuario enviou um pdf, faz o upload para o IPFS
-      if (file) {
-        //TODO: Precisa verificar se a organização é autorizada antes de fazer upload no pinata
-        fileUrl = await uploadToPinata(file);
-        console.log("Arquivo carregado no IPFS:", fileUrl);
-      }
-        //TODO: Analisar se vamos gerar PDF e enviar para o IPFS
-        //const generatedPDF = generateCertificate(data);
-        //const pdfFile = new File([generatedPDF], "certificado.pdf", { type: "application/pdf" });
+      const isAuthorized2 = await isAuthorized()
+      console.log("autorizada?", isAuthorized2)
 
-        //fileUrl = await uploadToPinata(pdfFile);
-        //console.log("Certificado gerado e carregado no IPFS:", fileUrl);
-      
+      let fileUrl = null;
+      if (isAuthorized2) {
+        //Se o usuario enviou um pdf, faz o upload para o IPFS
+        if (file) {
+          //TODO: Precisa verificar se a organização é autorizada antes de fazer upload no pinata
+          fileUrl = await uploadToPinata(file);
+          console.log("Arquivo carregado no IPFS:", fileUrl);
+        }
+        //TODO: Analisar se vamos gerar PDF e enviar para o IPFS
+        const generatedPDF = generateCertificate(data);
+        const pdfFile = new File([generatedPDF], "certificado.pdf", { type: "application/pdf" });
+
+        fileUrl = await uploadToPinata(pdfFile);
+        console.log("Certificado gerado e carregado no IPFS:", fileUrl);
+      }
       const hash = generateCertificateHash(data, fileUrl);
-      
+
       const certificateId = `${data.recipientName}`; //TODO: Temporario
+
 
       await issueCertificate({ ...data, certificateId, hash })
 
