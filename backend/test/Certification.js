@@ -8,7 +8,7 @@ describe("Certification", function () {
     let organization1;
     let organization2;
     let candidate1;
-    let certificateId = "cert123";
+    let certificateId = "Cert123";
 
     beforeEach(async function () {
         [owner, organization1, organization2, candidate1] = await ethers.getSigners();
@@ -63,11 +63,12 @@ describe("Certification", function () {
             );
 
             const cert = await certification.getCertificate(certificateId);
-            expect(cert[0]).to.equal("Candidate 1");
-            expect(cert[1]).to.equal("Blockchain Certificate");
-            expect(cert[2]).to.equal("Organization 1");
-            expect(cert[3]).to.equal(emissionDate);
-            expect(cert[4]).to.equal(ipfsHash);
+            expect(cert[0]).to.equal("Cert123");
+            expect(cert[1]).to.equal("Candidate 1");
+            expect(cert[2]).to.equal("Blockchain Certificate");
+            expect(cert[3]).to.equal("Organization 1");
+            expect(cert[4]).to.equal(emissionDate);
+            expect(cert[5]).to.equal(ipfsHash);
         });
 
         it("Deve evitar a criação de um certificado com um ID duplicado", async function () {
@@ -158,8 +159,10 @@ describe("Certification", function () {
         const cert1 = await certification.getCertificate("cert1");
         const cert2 = await certification.getCertificate("cert2");
     
-        expect(cert1[0]).to.equal("Candidate 1");
-        expect(cert2[0]).to.equal("Candidate 2");
+        expect(cert1[0]).to.equal("cert1");
+        expect(cert1[1]).to.equal("Candidate 1");
+        expect(cert2[0]).to.equal("cert2");
+        expect(cert2[1]).to.equal("Candidate 2");
     });
 
     it("Deve lidar com adições e remoções repetidas sem erro", async function () {
@@ -292,11 +295,12 @@ describe("Certification", function () {
             );
 
             const cert = await certification.getCertificate(certificateId);
-            expect(cert[0]).to.equal("Candidate 1");
-            expect(cert[1]).to.equal("Blockchain Certificate");
-            expect(cert[2]).to.equal("Organization 1");
-            expect(cert[3]).to.equal(emissionDate);
-            expect(cert[4]).to.equal(ipfsHash);
+            expect(cert[0]).to.equal("Cert123");
+            expect(cert[1]).to.equal("Candidate 1");
+            expect(cert[2]).to.equal("Blockchain Certificate");
+            expect(cert[3]).to.equal("Organization 1");
+            expect(cert[4]).to.equal(emissionDate);
+            expect(cert[5]).to.equal(ipfsHash);
         });
     });
 });
