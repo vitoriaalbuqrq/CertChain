@@ -16,7 +16,7 @@ import LoadingSpinner from "../components/ui/LoadingSpinner";
 import FormHeader from "../components/forms/FormHeader";
 import Button from "../components/ui/Button";
 import { issueCertificate, isAuthorized } from "../contracts/contractIntegration";
-
+import useToast from "../hooks/useToast";
 
 const issueCertificateFormSchema = z.object({
   recipientName: z.string().nonempty("O nome do destinatário é obrigatório."),
@@ -32,7 +32,7 @@ const IssueCertificate = () => {
   const [openModal, setOpenModal] = useState(false);
   const [certificateHash, setCertificateHash] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [message, setMessage] = useState("")
+  const [validationMessage, setValidationMessage] = useState(true);
 
   const methods = useForm({
     resolver: zodResolver(issueCertificateFormSchema),
@@ -45,11 +45,11 @@ const IssueCertificate = () => {
     console.log(data); //TODO: Apenas para teste. Deve ser removido
     setIsLoading(true);
     try {
-      const isAuthorized2 = await isAuthorized()
-      console.log("autorizada?", isAuthorized2)
+      const isAuthorizedOrganization = await isAuthorized()
+      console.log("autorizada?", isAuthorizedOrganization)
 
       let fileUrl = null;
-      if (isAuthorized2) {
+      if (isAuthorizedOrganization) {
         //Se o usuario enviou um pdf, faz o upload para o IPFS
         if (file) {
           //TODO: Precisa verificar se a organização é autorizada antes de fazer upload no pinata
@@ -62,24 +62,27 @@ const IssueCertificate = () => {
 
         fileUrl = await uploadToPinata(pdfFile);
         console.log("Certificado gerado e carregado no IPFS:", fileUrl);
+        const hash = generateCertificateHash(data, fileUrl);
+        
+        const certificateId = `${data.recipientName}`; //TODO: Temporario
+        
+        
+        await issueCertificate({ ...data, certificateId, hash })
+        
+        setCertificateHash(hash);
+        console.log("Hash do certificado:", hash);
+        
+        setOpenModal(true);
+      }else{
+        useToast("Instituição não autorizada!", "error");
       }
-      const hash = generateCertificateHash(data, fileUrl);
-
-      const certificateId = `${data.recipientName}`; //TODO: Temporario
-
-
-      await issueCertificate({ ...data, certificateId, hash })
-
-      setCertificateHash(hash);
-      console.log("Hash do certificado:", hash);
-
-      setOpenModal(true);
 
     } catch (error) {
       console.error(error);
-      setMessage(error.message)
+      useToast("Erro na solicitação!", "error");
+    }finally {
+      setIsLoading(false);
     }
-    setIsLoading(false);
   };
 
   function onFileChange(file) {
@@ -155,16 +158,14 @@ const IssueCertificate = () => {
             {isLoading && (
               <LoadingSpinner />
             )}
-            {message && (
-              <p>{message}</p>
-            )}
           </form>
         </FormProvider>
         <Modal
           open={openModal}
           onClose={() => setOpenModal(false)}
-          title="Certificado emitido com sucesso!">
-          <p className="mb-2">Hash para verificação:</p>
+          title="Certificado emitido com sucesso!"
+          validationMessage={validationMessage}>
+          <p className="mb-2 text-white">Hash para verificação:</p>
           <div className="flex justify-between p-1 border border-solid border-light-gray rounded-md">
             <CopyText info={certificateHash} />
           </div>

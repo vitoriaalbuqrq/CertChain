@@ -59,12 +59,12 @@ async function issueCertificate(certificateData){
     const timestamp = new Date(certificateData.issueDate).getTime() / 1000;
 
     const tx = await contract.generateCertificate(
-      certificateData.certificateId,
+      certificateData.hash,
       certificateData.recipientName,
       certificateData.certificateTitle,
       certificateData.issuerName,
       timestamp,
-      certificateData.hash
+      certificateData.certificateId
     );
 
     const receipt = await tx.wait();
@@ -89,4 +89,18 @@ async function isCertificateValid(certificateId){
   }
 }
 
-export { addOrganization, issueCertificate, isCertificateValid, isAuthorized };
+async function getCertificate(certificateId){
+  try {
+    const provider = await getProvider();
+    const contract = new ethers.Contract(CONTRACT_ADDRESS, ABI, provider);
+    const certificate = await contract.getCertificate(certificateId);
+    return certificate;
+  } catch (err) {
+    console.error(`Erro ao obter certificado ${certificateId}:`, err);
+    return false;
+  }
+}
+
+
+
+export { addOrganization, issueCertificate, isCertificateValid, isAuthorized, getCertificate };

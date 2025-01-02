@@ -11,8 +11,8 @@ import { ErrorMessage } from "../components/forms/ErrorMessage";
 import Modal from "../components/ui/Modal";
 import LoadingSpinner from "../components/ui/LoadingSpinner";
 import Button from "../components/ui/Button";
-import { isCertificateValid } from "../contracts/contractIntegration";
-
+import { isCertificateValid, getCertificate } from "../contracts/contractIntegration";
+import useToast from "../hooks/useToast";
 
 const validateCertificateSchema = z.object({
   certificateId: z.string().optional(),
@@ -38,19 +38,18 @@ const ValidateCertificate = () => {
     setIsLoading(true);
     //TODO: Verificar se pdf esta no IPFS ou
     //TODO: Buscar por ID do certificado
-    
+
     try {
       const isValid = await isCertificateValid(data.certificateId)
       console.log(isValid)
       isValid ? setValidationMessage(true) : setValidationMessage(false);
     } catch (error) {
-      console.log(error)
+      useToast("Erro na solicitação!", "error");
     }
     console.log(validationMessage)
     setIsLoading(false);
     setOpenModal(true)
   }
-
 
   function onFileChange(file) {
     setFile(file || null);
@@ -86,19 +85,23 @@ const ValidateCertificate = () => {
             </Field>
 
             <Button text="Verificar Certificado" />
-            
+
             {isLoading && (
-              <LoadingSpinner/>
+              <LoadingSpinner />
             )}
           </form>
         </FormProvider>
-        {/* TODO: Melhorar */}
         <Modal
           open={openModal}
           onClose={() => setOpenModal(false)}
-          title={validationMessage ? "Certificado válido!" : "Certificado inválido!"}>
-          {/* Redireciona para o PDF do certificado */}
-          <button>Ver PDF</button>
+          validationMessage={validationMessage}>
+          {validationMessage ? (
+            <div className="text-center">
+              <Button text="Visualizar Certificado" />
+            </div>
+          ) : (
+            <p>Certificado não registrado.</p>
+          )}
         </Modal>
       </Container>
     </main>
