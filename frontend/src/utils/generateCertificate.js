@@ -1,10 +1,9 @@
 import { jsPDF } from "jspdf";
 
-//TODO: Verificar certificateHash
 const addCertificateContent = (pdf, data) => {
 
     pdf.setFont("helvetica", "normal").setFontSize(12).setTextColor(100, 100, 100);
-    pdf.text(`Hash do certificado: ${data.certificateHash}`, 250, 20, null, null, "right");
+    pdf.text(`ID do certificado: ${data.hash}`, 250, 20, null, null, "right");
 
     pdf.setFont("helvetica", "bold").setFontSize(16).setTextColor(50, 50, 50);
     pdf.text("CERTIFICADO DE CONCLUSÃO", 20, 60); // Descendo a partir de 30 para 50

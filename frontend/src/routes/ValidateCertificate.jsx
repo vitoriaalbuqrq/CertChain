@@ -1,4 +1,5 @@
 import { FormProvider, useForm } from "react-hook-form";
+import { Link } from 'react-router-dom';
 import { z } from "zod";
 import Container from "../components/forms/Container"
 import Field from "../components/forms/Field"
@@ -28,27 +29,31 @@ const ValidateCertificate = () => {
   const [openModal, setOpenModal] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [validationMessage, setValidationMessage] = useState(false);
+  const [ipfsUrl, setIpfsUrl] = useState("");
 
   const methods = useForm({
     resolver: zodResolver(validateCertificateSchema),
   });
 
   const handleFormSubmit = async (data) => {
-    console.log(data);
     setIsLoading(true);
-    //TODO: Verificar se pdf esta no IPFS ou
-    //TODO: Buscar por ID do certificado
+    let ipfsUrl = "";
 
     try {
       const isValid = await isCertificateValid(data.certificateId)
-      console.log(isValid)
-      isValid ? setValidationMessage(true) : setValidationMessage(false);
+
+      if(isValid) {
+        ipfsUrl = await getCertificate(data.certificateId);
+        setValidationMessage(true)
+      } else {
+        setValidationMessage(false);
+      }
     } catch (error) {
       useToast("Erro na solicitação!", "error");
     }
-    console.log(validationMessage)
     setIsLoading(false);
-    setOpenModal(true)
+    setIpfsUrl(ipfsUrl)
+    setOpenModal(true);
   }
 
   function onFileChange(file) {
@@ -96,8 +101,9 @@ const ValidateCertificate = () => {
           onClose={() => setOpenModal(false)}
           validationMessage={validationMessage}>
           {validationMessage ? (
-            <div className="text-center">
-              <Button text="Visualizar Certificado" />
+            <div className="text-center py-3">
+              <Link to={ipfsUrl} target="_blank" className="bg-gray-600 py-3 px-5 rounded-full text-white">Visualizar Certificado</Link>
+              {/* <Button text="Visualizar Certificado" /> */}
             </div>
           ) : (
             <p>Certificado não registrado.</p>

@@ -42,45 +42,33 @@ const IssueCertificate = () => {
   });
 
   const handleFormSubmit = async (data) => {
-    console.log(data); //TODO: Apenas para teste. Deve ser removido
     setIsLoading(true);
     try {
-      const isAuthorizedOrganization = await isAuthorized()
-      console.log("autorizada?", isAuthorizedOrganization)
-
-      let fileUrl = null;
-      if (isAuthorizedOrganization) {
-        //Se o usuario enviou um pdf, faz o upload para o IPFS
-        if (file) {
-          //TODO: Precisa verificar se a organização é autorizada antes de fazer upload no pinata
-          fileUrl = await uploadToPinata(file);
-          console.log("Arquivo carregado no IPFS:", fileUrl);
-        }
-        //TODO: Analisar se vamos gerar PDF e enviar para o IPFS
-        const generatedPDF = generateCertificate(data);
-        const pdfFile = new File([generatedPDF], "certificado.pdf", { type: "application/pdf" });
-
-        fileUrl = await uploadToPinata(pdfFile);
-        console.log("Certificado gerado e carregado no IPFS:", fileUrl);
-        const hash = generateCertificateHash(data, fileUrl);
-        
-        const certificateId = `${data.recipientName}`; //TODO: Temporario
-        
-        
-        await issueCertificate({ ...data, certificateId, hash })
-        
-        setCertificateHash(hash);
-        console.log("Hash do certificado:", hash);
-        
-        setOpenModal(true);
-      }else{
+      const isAuthorizedOrganization = await isAuthorized();
+      if (!isAuthorizedOrganization) {
         useToast("Instituição não autorizada!", "error");
+        return;
       }
 
+      let hash = null;
+      let fileUrl = null;
+
+      if (file) {
+        hash = generateCertificateHash(data);
+        fileUrl = await uploadToPinata(file);
+      } else {
+        hash = generateCertificateHash(data);
+        const generatedPDF = generateCertificate({...data, hash});
+        const pdfFile = new File([generatedPDF], "certificado.pdf", { type: "application/pdf" });
+        fileUrl = await uploadToPinata(pdfFile);
+      }
+      await issueCertificate({ ...data, hash, fileUrl});
+
+      setCertificateHash(hash);
+      setOpenModal(true);
     } catch (error) {
-      console.error(error);
       useToast("Erro na solicitação!", "error");
-    }finally {
+    } finally {
       setIsLoading(false);
     }
   };
@@ -88,6 +76,12 @@ const IssueCertificate = () => {
   function onFileChange(file) {
     setFile(file || null);
   }
+
+  /*const generatePDFHash = async (file) => {
+    const arrayBuffer = await file.arrayBuffer();
+    const wordArray = CryptoJS.lib.WordArray.create(arrayBuffer);
+    return CryptoJS.SHA256(wordArray).toString(CryptoJS.enc.Hex);
+  };*/
 
   const generateCertificateHash = (data, fileUrl = "") => {
     const certificateData = `

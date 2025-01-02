@@ -1,16 +1,16 @@
-import { ethers } from 'ethers';
-import ABI from './contractABI.json';
+import { ethers } from "ethers";
+import ABI from "./contractABI.json";
 
-const CONTRACT_ADDRESS = '0x59a17A7898a47DC83CB4E482EABf7659FBf7eaD7';
+const CONTRACT_ADDRESS = "0x59a17A7898a47DC83CB4E482EABf7659FBf7eaD7";
 
-//TODO: Remover logs
 async function getProvider() {
-  if (!window.ethereum) throw new Error('No MetaMask found!');
+  if (!window.ethereum) throw new Error("No MetaMask found!");
 
   const provider = new ethers.BrowserProvider(window.ethereum);
 
   const accounts = await provider.send("eth_requestAccounts", []);
-  if (!accounts || !accounts.length) throw new Error('Wallet not found/allowed!');
+  if (!accounts || !accounts.length)
+    throw new Error("Wallet not found/allowed!");
   return provider;
 }
 
@@ -22,14 +22,28 @@ async function getContractSigner() {
   return contract;
 }
 
+async function isOwner() {
+  try {
+    const contract = await getContractSigner();
+    const ownerAddress = await contract.owner();
+    const provider = await getProvider();
+    const signerAddress = (await provider.getSigner()).getAddress();
+
+    return ownerAddress.toLowerCase() === (await signerAddress).toLowerCase();
+  } catch (err) {
+    console.error("Erro ao obter owner", err);
+    return false;
+  }
+}
+
 async function addOrganization(address) {
   try {
     const contract = await getContractSigner();
     const tx = await contract.addOrganization(address);
     await tx.wait();
-    console.log('Organização adicionada com sucesso');
+    console.log("Organização adicionada com sucesso");
   } catch (err) {
-    console.error('Erro ao adicionar a organização', err);
+    console.error("Erro ao adicionar a organização", err);
   }
 }
 
@@ -41,18 +55,15 @@ async function isAuthorized() {
 
     const contract = new ethers.Contract(CONTRACT_ADDRESS, ABI, signer);
 
-    console.log("endereço da organização", orgAddress);
-
     const isAuthorized = await contract.organizations(orgAddress);
     return isAuthorized;
-
-  }catch (err){
-    console.error('Erro ao verificar organização', err);
+  } catch (err) {
+    console.error("Erro ao verificar organização", err);
     return false;
   }
 }
 
-async function issueCertificate(certificateData){
+async function issueCertificate(certificateData) {
   try {
     const contract = await getContractSigner();
 
@@ -64,24 +75,20 @@ async function issueCertificate(certificateData){
       certificateData.certificateTitle,
       certificateData.issuerName,
       timestamp,
-      certificateData.certificateId
+      certificateData.fileUrl
     );
 
     const receipt = await tx.wait();
-    console.log('Certificado gerado com sucesso:', receipt);
-    
   } catch (err) {
-    console.error('Erro ao gerar certificado:', err);
+    console.error("Erro ao gerar certificado:", err);
   }
 }
 
-
-async function isCertificateValid(certificateId){
+async function isCertificateValid(certificateId) {
   try {
     const provider = await getProvider();
     const contract = new ethers.Contract(CONTRACT_ADDRESS, ABI, provider);
     const isValid = await contract.isVerified(certificateId);
-    console.log('isValid:', isValid);
     return isValid;
   } catch (err) {
     console.error(`Erro ao verificar o certificado ${certificateId}:`, err);
@@ -89,18 +96,31 @@ async function isCertificateValid(certificateId){
   }
 }
 
-async function getCertificate(certificateId){
+async function getCertificate(certificateId) {
   try {
     const provider = await getProvider();
     const contract = new ethers.Contract(CONTRACT_ADDRESS, ABI, provider);
-    const certificate = await contract.getCertificate(certificateId);
-    return certificate;
+    const [
+      certificate_id,
+      candidate_name,
+      certification_name,
+      org_name,
+      emission_date,
+      ipfs_hash,
+    ] = await contract.getCertificate(certificateId);
+
+    return ipfs_hash;
   } catch (err) {
     console.error(`Erro ao obter certificado ${certificateId}:`, err);
     return false;
   }
 }
 
-
-
-export { addOrganization, issueCertificate, isCertificateValid, isAuthorized, getCertificate };
+export {
+  addOrganization,
+  issueCertificate,
+  isCertificateValid,
+  isAuthorized,
+  isOwner,
+  getCertificate,
+};

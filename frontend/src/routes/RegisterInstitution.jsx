@@ -7,9 +7,11 @@ import Input from "../components/forms/Input"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
 import Button from "../components/ui/Button"
-import { addOrganization } from "../contracts/contractIntegration";
+import { addOrganization, isOwner } from "../contracts/contractIntegration";
 import { useState } from "react"
 import LoadingSpinner from "../components/ui/LoadingSpinner"
+import useToast from "../hooks/useToast";
+
 
 const registerInstitutionSchema = z.object({
   institutionAddress: z
@@ -29,11 +31,20 @@ const RegisterInstitution = () => {
     setIsLoading(true);
     
     try {
+      const isOwnerUser = await isOwner();
+
+      if(!isOwnerUser){
+        useToast("Somente o proprietário do contrato pode adicionar Instituição.", "error");
+        setIsLoading(false);
+        return;
+      }
       await addOrganization(data.institutionAddress);
-      console.log("Organização adicionada")
       setIsLoading(false);
+      useToast("Instituição adicionada com sucesso.");
     }catch (error) {
-      console.log("Erro ao autorizar a instituição.", error)
+      useToast("Erro na solicitação!", "error");
+    }finally {
+      setIsLoading(false);
     }
   }
 

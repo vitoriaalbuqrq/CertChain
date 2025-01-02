@@ -14,7 +14,6 @@ const Navbar = () => {
       <ul className="gap-10 list-none hidden md:flex">
         <li><Link to="/validate" className="hover:opacity-90 hover:text-primary transition">Validar</Link></li>
         <li><Link to="/issue" className="hover:opacity-90 hover:text-primary transition">Emitir</Link></li>
-        {/* TODO: Modificar para exibir opção apenas para owner */}
         <li><Link to="/registerInstitution" className="bg-primary font-semibold text-dark-background px-3 py-2 rounded-full hover:opacity-90 transition">Registrar Instituição</Link></li>
       </ul>
       <div onClick={handleNav} className='block md:hidden'>
