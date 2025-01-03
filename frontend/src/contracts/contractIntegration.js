@@ -1,7 +1,7 @@
 import { ethers } from "ethers";
 import ABI from "./contractABI.json";
 
-const CONTRACT_ADDRESS = "0x59a17A7898a47DC83CB4E482EABf7659FBf7eaD7";
+const CONTRACT_ADDRESS = "0xC56A1C96E7687cbA9Ee6A7Ef78B5bF435487094c";
 
 async function getProvider() {
   if (!window.ethereum) throw new Error("No MetaMask found!");
@@ -41,7 +41,6 @@ async function addOrganization(address) {
     const contract = await getContractSigner();
     const tx = await contract.addOrganization(address);
     await tx.wait();
-    console.log("Organização adicionada com sucesso");
   } catch (err) {
     console.error("Erro ao adicionar a organização", err);
   }

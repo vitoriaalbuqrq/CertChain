@@ -77,12 +77,6 @@ const IssueCertificate = () => {
     setFile(file || null);
   }
 
-  /*const generatePDFHash = async (file) => {
-    const arrayBuffer = await file.arrayBuffer();
-    const wordArray = CryptoJS.lib.WordArray.create(arrayBuffer);
-    return CryptoJS.SHA256(wordArray).toString(CryptoJS.enc.Hex);
-  };*/
-
   const generateCertificateHash = (data, fileUrl = "") => {
     const certificateData = `
       RecipientName: ${data.recipientName}
