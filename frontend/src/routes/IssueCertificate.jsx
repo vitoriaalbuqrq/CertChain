@@ -50,14 +50,12 @@ const IssueCertificate = () => {
         return;
       }
 
-      let hash = null;
+      let hash = generateCertificateHash(data);
       let fileUrl = null;
 
       if (file) {
-        hash = generateCertificateHash(data);
         fileUrl = await uploadToPinata(file);
       } else {
-        hash = generateCertificateHash(data);
         const generatedPDF = generateCertificate({...data, hash});
         const pdfFile = new File([generatedPDF], "certificado.pdf", { type: "application/pdf" });
         fileUrl = await uploadToPinata(pdfFile);

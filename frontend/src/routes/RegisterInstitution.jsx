@@ -49,7 +49,7 @@ const RegisterInstitution = () => {
   }
 
   return (
-    <main className="bg-dark-background min-h-screen text-sm p-6 flex flex-col justify-start items-center md:pt-10 lg:text-base lg:pb-20">
+    <main className="bg-dark-background min-h-screen text-sm p-6 flex flex-col justify-start items-center md:pt-24 lg:text-base lg:pb-20">
       <FormHeader title="Registrar Instituição" info="Informe o endereço público da instituição que você deseja autorizar para a emissão de certificados." />
       <Container>
         <FormProvider {...methods}>

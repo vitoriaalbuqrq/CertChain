@@ -8,6 +8,7 @@ export default {
       },
       colors: {
         primary: "#00A4D6",
+        "primary-hover": "#46CDF6",
         "secondary-text": "#ADB0B2",
         "dark-background": "#11151A",
         "secondary-bg": "#202831",

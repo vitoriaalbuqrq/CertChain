@@ -5,7 +5,6 @@ import Container from "../components/forms/Container"
 import Field from "../components/forms/Field"
 import Input from "../components/forms/Input"
 import FormHeader from "../components/forms/FormHeader";
-import FileInput from "../components/forms/FileInput";
 import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ErrorMessage } from "../components/forms/ErrorMessage";
@@ -16,16 +15,10 @@ import { isCertificateValid, getCertificate } from "../contracts/contractIntegra
 import useToast from "../hooks/useToast";
 
 const validateCertificateSchema = z.object({
-  certificateId: z.string().optional(),
-  certificateFile: z.instanceof(FileList).optional(),
-}).refine(data => data.certificateId || data.certificateFile, {
-  message: "Você deve fornecer o ID do certificado ou carregar um arquivo PDF.",
-  path: ["certificateId"],
-});
+  certificateId: z.string().nonempty("Você deve fornecer o ID do certificado."),
+})
 
 const ValidateCertificate = () => {
-  // eslint-disable-next-line no-unused-vars
-  const [file, setFile] = useState("");
   const [openModal, setOpenModal] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [validationMessage, setValidationMessage] = useState(false);
@@ -56,13 +49,9 @@ const ValidateCertificate = () => {
     setOpenModal(true);
   }
 
-  function onFileChange(file) {
-    setFile(file || null);
-  }
-
   return (
-    <main className="bg-dark-background min-h-screen text-sm p-6 flex flex-col justify-start items-center md:pt-10 lg:text-base lg:pb-20">
-      <FormHeader title="Verificação de certificado" info="Confirme a autenticidade de um certificado fornecendo o ID único correspondente ou enviando o arquivo PDF do certificado para verificação." />
+    <main className="bg-dark-background min-h-screen text-sm p-6 flex flex-col justify-start items-center md:pt-24 lg:text-base lg:pb-20">
+      <FormHeader title="Verificação de certificado" info="Confirme a autenticidade de um certificado fornecendo o ID único correspondente." />
       <Container>
         <FormProvider {...methods}>
           <form
@@ -79,16 +68,6 @@ const ValidateCertificate = () => {
               <ErrorMessage name="certificateId" />
             </Field>
 
-            <div className="flex items-center justify-center w-full my-3 h-px">
-              <div className="h-px w-full bg-gray-500"></div>
-              <span className="px-3 text-gray-500 font-medium">ou</span>
-              <div className="h-px w-full bg-gray-500"></div>
-            </div>
-
-            <Field>
-              <FileInput onChange={onFileChange} label="Carregar certificado" />
-            </Field>
-
             <Button text="Verificar Certificado" />
 
             {isLoading && (
@@ -101,12 +80,12 @@ const ValidateCertificate = () => {
           onClose={() => setOpenModal(false)}
           validationMessage={validationMessage}>
           {validationMessage ? (
-            <div className="text-center py-3">
-              <Link to={ipfsUrl} target="_blank" className="bg-gray-600 py-3 px-5 rounded-full text-white">Visualizar Certificado</Link>
-              {/* <Button text="Visualizar Certificado" /> */}
+            <div className="flex flex-col gap-4 items-center">
+              <p className="text-white">Certificado autêntico e registrado na blockchain.</p>
+              <Link to={ipfsUrl} target="_blank" className="bg-gray-600 py-3 px-5 rounded-full font-bold text-white text-center w-1/2 hover:opacity-80">Visualizar Certificado</Link>
             </div>
           ) : (
-            <p>Certificado não registrado.</p>
+            <p>O certificado não é autêntico ou não foi registrado na blockchain.</p>
           )}
         </Modal>
       </Container>
