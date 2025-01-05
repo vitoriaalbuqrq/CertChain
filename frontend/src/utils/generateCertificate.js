@@ -1,30 +1,50 @@
 import { jsPDF } from "jspdf";
 
 const addCertificateContent = (pdf, data) => {
+  const pageWidth = pdf.internal.pageSize.width; 
+  const margin = 20; 
+  const maxWidth = pageWidth - 2 * margin; 
+  let currentY = 20; 
 
-    pdf.setFont("helvetica", "normal").setFontSize(12).setTextColor(100, 100, 100);
-    pdf.text(`Hash do certificado: ${data.certificateHash}`, 250, 20, null, null, "right");
+  const addText = (text, fontSize, fontStyle, textColor) => {
+    pdf.setFont("helvetica", fontStyle).setFontSize(fontSize).setTextColor(...textColor);
 
-    pdf.setFont("helvetica", "bold").setFontSize(16).setTextColor(50, 50, 50);
-    pdf.text("CERTIFICADO DE CONCLUSÃO", 20, 60); // Descendo a partir de 30 para 50
+    const lines = pdf.splitTextToSize(text, maxWidth);
+    const lineHeight = fontSize * 0.5; 
 
-    pdf.setFont("helvetica", "bold").setFontSize(50).setTextColor(0, 0, 0);
-    pdf.text(data.certificateTitle, 20, 90); // Descendo a partir de 50 para 70
+    if (lines.length > 2) {
+      fontSize = Math.max(fontSize - 2, 10);
+      pdf.setFontSize(fontSize);
+    }
 
-    pdf.setFont("helvetica", "normal").setFontSize(14).setTextColor(100, 100, 100);
-    pdf.text(`Entidade Emissora: ${data.issuerName}`, 20, 100); 
+    lines.forEach((line) => {
+      pdf.text(line, margin, currentY);
+      currentY += lineHeight;
+    });
+  };
 
-    pdf.setFont("helvetica", "bold").setFontSize(32).setTextColor(0, 0, 0);
-    pdf.text(data.recipientName, 20, 150); 
+  addText(`ID do certificado: ${data.hash}`, 12, "normal", [100, 100, 100]);
+  currentY += 10;
 
-    pdf.setFont("helvetica", "normal").setFontSize(14).setTextColor(100, 100, 100);
-    pdf.text(`Data: ${data.issueDate}`, 20, 160);
+  addText("CERTIFICADO DE CONCLUSÃO", 16, "bold", [50, 50, 50]);
+  currentY += 20;
+
+  addText(data.certificateTitle, 42, "bold", [0, 0, 0]);
+  currentY += 20;
+
+  addText(`Entidade Emissora: ${data.issuerName}`, 14, "normal", [100, 100, 100]);
+  currentY += 10;
+
+  addText(data.recipientName, 28, "bold", [0, 0, 0]);
+  currentY += 10;
+
+  addText(`Data: ${data.issueDate}`, 14, "normal", [100, 100, 100]);
 };
 
 export const generateCertificate = (data) => {
-    const pdf = new jsPDF("landscape", "mm", "a4");
-    addCertificateContent(pdf, data);
+  const pdf = new jsPDF("landscape", "mm", "a4");
+  addCertificateContent(pdf, data);
 
-    const pdfBlob = pdf.output('blob');
-    return pdfBlob;  
+  const pdfBlob = pdf.output("blob");
+  return pdfBlob;
 };

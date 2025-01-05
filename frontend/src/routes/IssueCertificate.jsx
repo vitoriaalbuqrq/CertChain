@@ -15,7 +15,8 @@ import { generateCertificate } from "../utils/generateCertificate";
 import LoadingSpinner from "../components/ui/LoadingSpinner";
 import FormHeader from "../components/forms/FormHeader";
 import Button from "../components/ui/Button";
-
+import { issueCertificate, isAuthorized } from "../contracts/contractIntegration";
+import useToast from "../hooks/useToast";
 
 const issueCertificateFormSchema = z.object({
   recipientName: z.string().nonempty("O nome do destinatário é obrigatório."),
@@ -31,6 +32,7 @@ const IssueCertificate = () => {
   const [openModal, setOpenModal] = useState(false);
   const [certificateHash, setCertificateHash] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [validationMessage, setValidationMessage] = useState(true);
 
   const methods = useForm({
     resolver: zodResolver(issueCertificateFormSchema),
@@ -40,30 +42,32 @@ const IssueCertificate = () => {
   });
 
   const handleFormSubmit = async (data) => {
-    console.log(data); //TODO: Apenas para teste. Deve ser removido
     setIsLoading(true);
     try {
+      const isAuthorizedOrganization = await isAuthorized();
+      if (!isAuthorizedOrganization) {
+        useToast("Instituição não autorizada!", "error");
+        return;
+      }
+
+      let hash = generateCertificateHash(data);
       let fileUrl = null;
-      //Se o usuario enviou um pdf, faz o upload para o IPFS
+
       if (file) {
         fileUrl = await uploadToPinata(file);
-        console.log("Arquivo carregado no IPFS:", fileUrl);
-      } else{
-        const generatedPDF = generateCertificate(data);
+      } else {
+        const generatedPDF = generateCertificate({...data, hash});
         const pdfFile = new File([generatedPDF], "certificado.pdf", { type: "application/pdf" });
-  
         fileUrl = await uploadToPinata(pdfFile);
-        console.log("Certificado gerado e carregado no IPFS:", fileUrl);
       }
-      setIsLoading(false);
-      const hash = generateCertificateHash(data, fileUrl);
+      await issueCertificate({ ...data, hash, fileUrl});
+
       setCertificateHash(hash);
-      console.log("Hash do certificado:", hash);
-
-      setOpenModal(true)
-
+      setOpenModal(true);
     } catch (error) {
-      console.error(error);
+      useToast("Erro na solicitação!", "error");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -78,14 +82,14 @@ const IssueCertificate = () => {
       IssuerName: ${data.issuerName}
       IssueDate: ${data.issueDate}
       FileURL: ${fileUrl}
-    `; 
+    `;
     const hash = CryptoJS.SHA256(certificateData).toString(CryptoJS.enc.Hex);
     return hash;
   };
 
   return (
-    <main className="bg-dark-background h-full text-sm p-6 flex flex-col justify-start items-center md:pt-10 lg:text-base lg:pb-20">
-      <FormHeader title="Emissão de Certificado" info="Preencha os dados abaixo para emitir um certificado. Após a emissão, o certificado estará pronto para ser consultado."/>
+    <main className="bg-dark-background min-h-screen text-sm p-6 flex flex-col justify-start items-center md:pt-10 lg:text-base lg:pb-20">
+      <FormHeader title="Emissão de Certificado" info="Preencha os dados abaixo para emitir um certificado. Após a emissão, o certificado estará pronto para ser consultado." />
       <Container>
         <FormProvider {...methods}>
           <form
@@ -135,20 +139,21 @@ const IssueCertificate = () => {
               <FileInput onChange={onFileChange} label="Carregar certificado (opcional)" />
             </Field>
 
-            <Button text="Emitir Certificado"/>
+            <Button text="Emitir Certificado" />
 
             {isLoading && (
-              <LoadingSpinner/>
+              <LoadingSpinner />
             )}
           </form>
         </FormProvider>
         <Modal
           open={openModal}
           onClose={() => setOpenModal(false)}
-          title="Certificado emitido com sucesso!">
-          <p className="mb-2">Hash para verificação:</p>
+          title="Certificado emitido com sucesso!"
+          validationMessage={validationMessage}>
+          <p className="mb-2 text-white">Hash para verificação:</p>
           <div className="flex justify-between p-1 border border-solid border-light-gray rounded-md">
-            <CopyText info={certificateHash}/>
+            <CopyText info={certificateHash} />
           </div>
         </Modal>
       </Container>
