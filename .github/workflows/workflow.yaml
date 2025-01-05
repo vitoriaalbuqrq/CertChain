@@ -1,0 +1,31 @@
+name : Run Tests
+
+on: 
+  pull_request:
+    paths:
+      - 'backend/**'
+  push:
+    paths:
+      - 'backend/**'
+
+jobs:
+  run-tests:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Change to backend folder
+        run: cd backend
+
+      - name: Run install dependencies
+        run:
+          npm install
+        working-directory: ./backend
+
+      - name: Run test 
+        run:
+          npx hardhat test
+        working-directory: ./backend
