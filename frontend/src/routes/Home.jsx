@@ -11,7 +11,7 @@ const Home = () => {
           <LinkButton to="/roles" text="Comece agora" />
         </article>
         <aside>
-          <img className="w-9/12 mx-auto" src="src/assets/img/img-certification.png" alt="Certification image" />
+          <img className="w-9/12 mx-auto" src="/assets/img/img-certification.png" alt="Certification image" />
         </aside>
         <div className="absolute z-[3] -right-[-5rem] bottom-10 w-[20%] h-[20%] rounded-full bg-primary blur-[140px]" />
       </section>
