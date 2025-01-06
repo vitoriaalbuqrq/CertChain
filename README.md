@@ -2,10 +2,15 @@
 
 Este projeto propõe uma aplicação que utiliza a tecnologia blockchain para emissão, validação e armazenamento de certificados digitais. A solução é projetada para oferecer maior segurança, transparência e confiabilidade no gerenciamento de certificações acadêmicas, profissionais ou de eventos.
 
+O projeto pode ser acessado por meio do link: https://certchain.vercel.app/
+
 ## Funcionalidades:
 - **Emissão de Certificados**: Os certificados são gerados em formato PDF e registrados na blockchain, garantindo sua integridade e imutabilidade.
 - **Validação**: Usuários podem verificar a autenticidade de um certificado consultando o hash armazenado na blockchain.
 - **Armazenamento Descentralizado**: Certificados em PDF são armazenados no IPFS (InterPlanetary File System), garantindo disponibilidade e integridade dos arquivos.
+
+Abaixo segue uma descrição detalhada da arquitetura do sistema
+![Diagrama de arquitetura](https://github.com/user-attachments/assets/acb3272a-473f-4d23-8d05-99762bbee75f)
 
 ---
 
@@ -26,7 +31,7 @@ git clone https://github.com/vitoriaalbuqrq/CertChain
 2. Após clonar o repositório, entre no diretório da aplicação:
    
 ```bash
-cd CertChain/fronted
+cd CertChain/frontend
 ```
 3. No diretório do projeto, execute o comando abaixo para instalar as dependências necessárias:
 
@@ -50,10 +55,7 @@ Na tela inicial, você pode escolher entre as duas principais funcionalidades da
 Basta clicar no botão "Comece Agora" para iniciar.
 
 ## Verificação de certificados
-Na aba de verificação, você pode validar um certificado de duas maneiras:
-- **Inserindo o ID do Certificado**: Digite o identificador único gerado quando o certificado foi registrado na blockchain.
-- **Enviando o Arquivo PDF**: Faça upload do arquivo do certificado para verificar sua integridade e autenticidade.
-Essa funcionalidade garante a segurança e confiabilidade do processo de validação.
+Na aba de verificação, você pode validar um certificado inserindo o identificador único gerado no momento em que o certificado foi registrado na blockchain. Caso o valor seja válido, o documento será exibido. Essa funcionalidade garante a segurança e a confiabilidade do processo.
 
 ## Emissão de Certificado 
 Na aba de emissão, você pode criar um novo certificado fornecendo as seguintes informações:
@@ -65,6 +67,11 @@ Além disso, você pode optar por fazer upload de um certificado PDF já pronto,
 
 ## Registrar Instituição
 Na aba de registro, é possível cadastrar novas instituições autorizadas a emitir certificados. Para isso, deve ser fornecida a chave pública da instituição. Ao ser registrada, a instituição é incluída na lista de entidades confiáveis do sistema, permitindo que seus certificados sejam emitidos e validados com segurança.
+
+---
+
+## Deploy do contrato 
+Quando a entidade emissora atendia aos requisitos para validar o certificado, o contrato era compilado e implantado utilizando o Hardhat. Após o deploy, o endereço do contrato podia ser verificado no Etherscan da testnet Sepolia, configurada previamente com as credenciais do Infura.
 
 ---
 
