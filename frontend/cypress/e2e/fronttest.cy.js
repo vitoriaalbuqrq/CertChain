@@ -36,7 +36,7 @@ describe('template spec', () => {
   it('Deve negar a emissão de certificados com campos vazios', () => {
     cy.visit('http://localhost:5173')
     cy.get('article > .flex').click()
-    cy.get('.gap-5 > :nth-child(2)').click()
+    cy.get('.gap-5 > :nth-child(2) > .flex').click()
     cy.get('.gap-5 > .bg-primary').click()
 
     cy.get(':nth-child(1) > .text-red-500').contains("O nome do destinatário é obrigatório.")
@@ -46,10 +46,10 @@ describe('template spec', () => {
   it('Deve notificar na validação que não pode verificar validação com campos vazios', () => {
     cy.visit('http://localhost:5173')
     cy.get('article > .flex').click()
-    cy.get('.gap-5 > [href="/validate"]').click()
+    cy.get('.gap-5 > :nth-child(1) > .flex').click()
 
     cy.get('.gap-5 > .bg-primary').click()
-    cy.get('.gap-5 > :nth-child(1) > .text-red-500').contains('Você deve fornecer o ID do certificado ou carregar um arquivo PDF.')
+    cy.get('.gap-5 > :nth-child(1) > .text-red-500').contains('Você deve fornecer o ID do certificado.')
   })
   it('Deve notificar que não pode registrar instituição com campos vazios', () => {
     cy.visit('http://localhost:5173/registerInstitution')
@@ -69,13 +69,13 @@ describe('template spec', () => {
 
     cy.get('.text-base').contains('Certificado inválido!')
     cy.get('.w-6 > path').click()
-  })/*
+  })
   it('Deve notificar na validação que o certificado é valido caso sejam passados dados validos', () => {
     cy.visit('http://localhost:5173/validate')
-    cy.get('.gap-5 > :nth-child(1) > div > .w-full').type('7d7b2c6b6e3b9d27457eff76f7cd9d4f84c99c29072e5de1dd2c13eb0fb225a0')
+    cy.get('.gap-5 > :nth-child(1) > div > .w-full').type('683d53bc490a68cb69c2f79235bdd880865d1711c7a16ef5f96da9ae537b4ae3')// valido caso idnão seja apagado.
     cy.get('.gap-5 > .bg-primary').click()
 
     cy.get('.text-base').contains('Certificado válido!')
     cy.get('.w-6 > path').click()
-  })*/
+  })
 })

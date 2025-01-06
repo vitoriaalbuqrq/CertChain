@@ -1,4 +1,4 @@
-name : Run Tests
+name: Run Tests
 
 on: 
   pull_request:
@@ -10,22 +10,27 @@ on:
 
 jobs:
   run-tests:
-
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Change to backend folder
-        run: cd backend
-
-      - name: Run install dependencies
-        run:
-          npm install
+      - name: Install dependencies
+        run: npm install
         working-directory: ./backend
 
-      - name: Run test 
-        run:
-          npx hardhat test
+      - name: Set environment variables
+        env:
+          RPC_NODE: ${{ secrets.RPC_NODE }}
+          CHAIN_ID: ${{ secrets.CHAIN_ID }}
+          SECRET: ${{ secrets.SECRET }}
+        run: echo "Environment variables loaded"
+
+      - name: Run tests
+        run: npx hardhat test
         working-directory: ./backend
+        env:
+          RPC_NODE: ${{ secrets.RPC_NODE }}
+          CHAIN_ID: ${{ secrets.CHAIN_ID }}
+          SECRET: ${{ secrets.SECRET }}
